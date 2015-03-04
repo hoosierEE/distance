@@ -3,13 +3,32 @@
 
 function getLoc() {
     // TODO: error handling
-    navigator.geolocation.getCurrentPosition(howFar);
+    navigator.geolocation.getCurrentPosition(howFar, geoErrorHandler);
 }
 
 function howFar(pos) {
     var lat = pos.coords.latitude;
     var lon = pos.coords.longitude;
     document.getElementById('dfb').innerHTML = getDistance(lat,lon).toFixed(4) + ' km';
+}
+
+function geoErrorHandler(error) {
+    var sError = "";
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            sError = "No permission for Geolocation";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            sError = "Unable to get Geolocation position.";
+            break;
+        case error.TIMEOUT:
+            sError = "Request for Geolocation timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            sError = "Unknown error with Geolocation.";
+            break;
+    }
+    document.getElementById('log').innerHTML = sError;
 }
 
 function getDistance(rawLat,rawLon) {
@@ -26,9 +45,7 @@ function getDistance(rawLat,rawLon) {
         var dlat = abs(lat2-lat1);
         var dlon = abs(lon2-lon1);
         // https://en.wikipedia.org/wiki/Great-circle_distance
-        d = acos(
-                sin(lat1)*sin(lat2)
-                + cos(lat1)*cos(lat2)*cos(dlon));
+        d = acos(sin(lat1)*sin(lat2) + cos(lat1)*cos(lat2)*cos(dlon));
     }
     return d * meanEarthRadius;
 }
