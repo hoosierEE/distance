@@ -4,11 +4,13 @@
     <title>Where Brain?</title>
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
         <meta charset="utf-8">
-
+        <script src='app.js'></script>
     </head>
     <body>
-    <input type='button' value='How Far?' onclick='javascript:showLoc()'><br>
-    Lat: <span class='lat'></span><br>
-    Lon: <span class='lon'></span>
+    <input type='button' value='How Far?' onclick='getLoc()'><br>
+    <!--Current Latitude: <span id='lat'></span><br>
+    Current Longitude: <span id='lon'></span><br>
+    -->
+    Distance from Brain: <span id='dfb'></span>
     </body>
 </html>
