@@ -6,3 +6,5 @@ function showMap(pos) {
     var lat = pos.coords.latitude;
     var lon = pos.coords.longitude;
 }
+
+window.onload = getLoc();
