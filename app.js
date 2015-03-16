@@ -1,9 +1,6 @@
-/* Basre-Bones App */
-/////////////////////
-
 function getLoc() {
-    // TODO: error handling
-    navigator.geolocation.getCurrentPosition(howFar, geoErrorHandler);
+    var watchID = navigator.geolocation.watchPosition(howFar, geoErrorHandler);
+    return watchID;
 }
 
 function howFar(pos) {
@@ -33,7 +30,7 @@ function geoErrorHandler(error) {
 
 function getDistance(rawLat,rawLon) {
     // return great circle distance, in kilometers
-    meanEarthRadius = 6371;
+    var meanEarthRadius = 6371;
     var d;
     function toRad(deg) { return deg*Math.PI/180; }
     with(Math) {
@@ -54,14 +51,16 @@ function getDistance(rawLat,rawLon) {
 /* possible additions */
 ////////////////////////
 
-// return true if dist < 1m
-function touchstone(dist) { return false; }
+// // return true if dist < 1m
+// function touchstone(dist) { return false; }
 
-// enable sharing
-function share(level) { return {}; }
+// // enable sharing
+// function share(level) { return {}; }
 
-// other units
-function otherUnits(dist, unit) { return 0; }
+// // other units
+// function otherUnits(dist, unit) { return 0; }
 
-// history (be careful not to scare people)
-function appendToHistory(newDistanceRecording) { return {}; }
+// // history (be careful not to scare people)
+// function appendToHistory(newDistanceRecording) { return {}; }
+
+window.onload = getLoc;
