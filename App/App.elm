@@ -1,3 +1,4 @@
 import Graphics.Element
 import Text
-main = Text.asText "Hi"
+port geo : Signal Float
+main = Text.asText geo

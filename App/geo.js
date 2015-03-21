@@ -6,7 +6,8 @@ function getLoc() {
 function howFar(pos) {
     var lat = pos.coords.latitude;
     var lon = pos.coords.longitude;
-    document.getElementById('dfb').innerHTML = getDistance(lat,lon).toFixed(4) + ' km';
+    return getDistance(lat,lon);
+    // document.getElementById('dfb').innerHTML = getDistance(lat,lon).toFixed(4) + ' km';
 }
 
 function geoErrorHandler(error) {
@@ -25,12 +26,12 @@ function geoErrorHandler(error) {
             sError = "Unknown error with Geolocation.";
             break;
     }
-    document.getElementById('log').innerHTML = sError;
+    // document.getElementById('log').innerHTML = sError;
 }
 
 function getDistance(rawLat,rawLon) {
-    // return great circle distance, in kilometers
-    var meanEarthRadius = 6371;
+    // return great circle distance, in meters
+    var meanEarthRadius = 6371 * 1000;
     var d;
     function toRad(deg) { return deg*Math.PI/180; }
     with(Math) {
@@ -63,4 +64,4 @@ function getDistance(rawLat,rawLon) {
 // // history (be careful not to scare people)
 // function appendToHistory(newDistanceRecording) { return {}; }
 
-window.onload = getLoc;
+// window.onload = getLoc;
