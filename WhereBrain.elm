@@ -1,4 +1,4 @@
-module Stamps where
+module WhereBrain where
 
 import Signal (..)
 import Text
