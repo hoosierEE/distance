@@ -4003,6 +4003,69 @@ Elm.Native.Utils.make = function(localRuntime) {
     };
 };
 
+Elm.Native = Elm.Native || {};
+Elm.Native.Window = {};
+Elm.Native.Window.make = function(localRuntime) {
+
+    localRuntime.Native = localRuntime.Native || {};
+    localRuntime.Native.Window = localRuntime.Native.Window || {};
+    if (localRuntime.Native.Window.values) {
+        return localRuntime.Native.Window.values;
+    }
+
+    var Signal = Elm.Signal.make(localRuntime);
+    var NS = Elm.Native.Signal.make(localRuntime);
+    var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
+
+    function getWidth() {
+        return localRuntime.node.clientWidth;
+    }
+    function getHeight() {
+        if (localRuntime.isFullscreen()) {
+            return window.innerHeight;
+        }
+        return localRuntime.node.clientHeight;
+    }
+
+    var dimensions = NS.input(Tuple2(getWidth(), getHeight()));
+    dimensions.defaultNumberOfKids = 2;
+
+    // Do not move width and height into Elm. By setting the default number of kids,
+    // the resize listener can be detached.
+    var width  = A2(Signal.map, function(p){return p._0;}, dimensions);
+    width.defaultNumberOfKids = 0;
+
+    var height = A2(Signal.map, function(p){return p._1;}, dimensions);
+    height.defaultNumberOfKids = 0;
+
+    function resizeIfNeeded() {
+        // Do not trigger event if the dimensions have not changed.
+        // This should be most of the time.
+        var w = getWidth();
+        var h = getHeight();
+        if (dimensions.value._0 === w && dimensions.value._1 === h) return;
+
+        setTimeout(function () {
+            // Check again to see if the dimensions have changed.
+            // It is conceivable that the dimensions have changed
+            // again while some other event was being processed.
+            var w = getWidth();
+            var h = getHeight();
+            if (dimensions.value._0 === w && dimensions.value._1 === h) return;
+            localRuntime.notify(dimensions.id, Tuple2(w,h));
+        }, 0);
+    }
+    localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
+
+    return localRuntime.Native.Window.values = {
+        dimensions: dimensions,
+        width: width,
+        height: height,
+        resizeIfNeeded: resizeIfNeeded
+    };
+
+};
+
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
@@ -4468,8 +4531,45 @@ Elm.WhereBrain.make = function (_elm) {
    _L = _N.List.make(_elm),
    _P = _N.Ports.make(_elm),
    $moduleName = "WhereBrain",
+   $Basics = Elm.Basics.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Text = Elm.Text.make(_elm);
+   $Text = Elm.Text.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var dist = function (g) {
+      return function () {
+         var lon = $Basics.degrees(g.lon);
+         var lat = $Basics.degrees(g.lat);
+         var brainLon = $Basics.degrees(-86.520674);
+         var dLon = $Basics.abs(lon - brainLon);
+         var brainLat = $Basics.degrees(39.171989);
+         var googEarthRadius = 6378137.0;
+         return googEarthRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
+      }();
+   };
+   var scene = F2(function (_v0,
+   g) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var dtext = $Text.asText(dist(g));
+                 return A4($Graphics$Element.container,
+                 _v0._0,
+                 _v0._1,
+                 $Graphics$Element.middle,
+                 dtext);
+              }();}
+         _U.badCase($moduleName,
+         "between lines 25 and 26");
+      }();
+   });
+   var BrainGeo = F2(function (a,
+   b) {
+      return {_: {}
+             ,direction: b
+             ,distance: a};
+   });
    var geo = _P.portIn("geo",
    _P.incomingSignal(function (v) {
       return typeof v === "object" && "lat" in v && "lon" in v && "hdg" in v ? {_: {}
@@ -4481,10 +4581,38 @@ Elm.WhereBrain.make = function (_elm) {
                                                                                v.hdg)} : _U.badPort("an object with fields \'lat\', \'lon\', \'hdg\'",
       v);
    }));
-   var main = A2($Signal._op["<~"],
-   $Text.asText,
+   var main = A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   scene,
+   $Window.dimensions),
    geo);
    _elm.WhereBrain.values = {_op: _op
+                            ,BrainGeo: BrainGeo
+                            ,dist: dist
+                            ,scene: scene
                             ,main: main};
    return _elm.WhereBrain.values;
+};
+Elm.Window = Elm.Window || {};
+Elm.Window.make = function (_elm) {
+   "use strict";
+   _elm.Window = _elm.Window || {};
+   if (_elm.Window.values)
+   return _elm.Window.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _P = _N.Ports.make(_elm),
+   $moduleName = "Window",
+   $Native$Window = Elm.Native.Window.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var height = $Native$Window.height;
+   var width = $Native$Window.width;
+   var dimensions = $Native$Window.dimensions;
+   _elm.Window.values = {_op: _op
+                        ,dimensions: dimensions
+                        ,width: width
+                        ,height: height};
+   return _elm.Window.values;
 };
