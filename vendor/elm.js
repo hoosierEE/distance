@@ -4536,15 +4536,34 @@ Elm.WhereBrain.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Window = Elm.Window.make(_elm);
-   var dist = function (g) {
+   var distString = function (d) {
+      return _U.cmp(d,
+      100) < 0 ? A2($Basics._op["++"],
+      $Basics.toString(d),
+      " meters") : _U.cmp(d,
+      1000) < 0 ? A2($Basics._op["++"],
+      $Basics.toString(d / 1000),
+      " kilometers") : " really far";
+   };
+   var bg = {_: {}
+            ,direction: 361.0
+            ,distance: -1.0};
+   var geodesy = function (g) {
       return function () {
          var lon = $Basics.degrees(g.lon);
          var lat = $Basics.degrees(g.lat);
          var brainLon = $Basics.degrees(-86.520674);
          var dLon = $Basics.abs(lon - brainLon);
          var brainLat = $Basics.degrees(39.171989);
+         var dir = A2($Basics.atan2,
+         $Basics.sin(dLon) * $Basics.cos(brainLat),
+         $Basics.cos(lat) * $Basics.sin(brainLat) - $Basics.sin(lat) * $Basics.cos(brainLat) * $Basics.cos(dLon));
          var googEarthRadius = 6378137.0;
-         return googEarthRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
+         var dist = googEarthRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
+         return _U.replace([["distance"
+                            ,dist]
+                           ,["direction",dir]],
+         bg);
       }();
    };
    var scene = F2(function (_v0,
@@ -4553,15 +4572,19 @@ Elm.WhereBrain.make = function (_elm) {
          switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
-                 var dtext = $Text.asText(dist(g));
+                 var tDis = $Text.asText(geodesy(g).direction);
+                 var tDir = $Text.plainText(distString(geodesy(g).distance));
+                 var boths = A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([tDir,tDis]));
                  return A4($Graphics$Element.container,
                  _v0._0,
                  _v0._1,
                  $Graphics$Element.middle,
-                 dtext);
+                 boths);
               }();}
          _U.badCase($moduleName,
-         "between lines 25 and 26");
+         "between lines 38 and 41");
       }();
    });
    var BrainGeo = F2(function (a,
@@ -4588,7 +4611,9 @@ Elm.WhereBrain.make = function (_elm) {
    geo);
    _elm.WhereBrain.values = {_op: _op
                             ,BrainGeo: BrainGeo
-                            ,dist: dist
+                            ,bg: bg
+                            ,geodesy: geodesy
+                            ,distString: distString
                             ,scene: scene
                             ,main: main};
    return _elm.WhereBrain.values;
