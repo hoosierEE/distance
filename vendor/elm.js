@@ -5472,23 +5472,10 @@ Elm.WhereBrain.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Window = Elm.Window.make(_elm);
-   var medFont = {_: {}
-                 ,bold: false
-                 ,color: $Color.white
-                 ,height: $Maybe.Just(36)
-                 ,italic: false
-                 ,line: $Maybe.Nothing
-                 ,typeface: _L.fromArray(["BentonSansBold"
-                                         ,"sans"])};
-   var medStyle = function (t) {
-      return function () {
-         var tt = $Text.fromString(t);
-         var st = A2($Text.style,
-         medFont,
-         tt);
-         return $Text.centered(st);
-      }();
-   };
+   var iuStyle = F2(function (s,
+   t) {
+      return $Text.centered($Text.style(s)($Text.fromString(t)));
+   });
    var bigFont = {_: {}
                  ,bold: false
                  ,color: $Color.white
@@ -5497,16 +5484,13 @@ Elm.WhereBrain.make = function (_elm) {
                  ,line: $Maybe.Nothing
                  ,typeface: _L.fromArray(["BentonSansBold"
                                          ,"sans"])};
-   var bigStyle = function (t) {
-      return function () {
-         var tt = $Text.fromString(t);
-         var st = A2($Text.style,
-         bigFont,
-         tt);
-         return $Text.centered(st);
-      }();
-   };
-   var distMessage = function (d) {
+   var medFont = _U.replace([["typeface"
+                             ,_L.fromArray(["BentonSansRegular"
+                                           ,"sans"])]
+                            ,["height",$Maybe.Just(36)]],
+   bigFont);
+   var distMessage = F2(function (s,
+   d) {
       return function () {
          var kilo = function (x) {
             return x / 1000;
@@ -5534,12 +5518,19 @@ Elm.WhereBrain.make = function (_elm) {
                                       ,_1: "KILOMETERS"},
          n = $._0,
          c = $._1;
+         var en = iuStyle(bigFont)($Basics.toString($Basics.floor(n)));
+         var ec = $Graphics$Element.width($Graphics$Element.widthOf(en))(A2(iuStyle,
+         medFont,
+         c));
          return A2($Graphics$Element.flow,
          $Graphics$Element.down,
-         _L.fromArray([bigStyle($Basics.toString(n))
-                      ,medStyle(c)]));
+         _L.fromArray([en,ec]));
       }();
-   };
+   });
+   var png = A3($Graphics$Element.fittedImage,
+   100,
+   100,
+   "flatbrain_white.png");
    var bg = {_: {}
             ,direction: 361.0
             ,distance: -1.0};
@@ -5570,27 +5561,36 @@ Elm.WhereBrain.make = function (_elm) {
                  var background = $Graphics$Collage.filled($Color.red)(A2($Graphics$Collage.rect,
                  $Basics.toFloat(_v0._0),
                  $Basics.toFloat(_v0._1)));
+                 var wpng = $Basics.toFloat($Graphics$Element.widthOf(png));
                  var mrad = $Basics.toFloat($List.minimum(_L.fromArray([_v0._0
-                                                                       ,_v0._1])) / 3 | 0);
+                                                                       ,_v0._1]))) / 3.0;
                  var circ = A2($Graphics$Collage.outlined,
-                 $Graphics$Collage.solid($Color.white),
+                 _U.replace([["width",10]
+                            ,["color",$Color.white]],
+                 $Graphics$Collage.defaultLine),
                  $Graphics$Collage.circle(mrad));
                  var tDir = $Text.asText(function (_) {
                     return _.direction;
                  }(specializeGeo(g)));
-                 var tDis = distMessage(function (_) {
+                 var tDis = distMessage(mrad)(function (_) {
                     return _.distance;
                  }(specializeGeo(g)));
                  var dis = $Graphics$Collage.toForm(tDis);
-                 return A3($Graphics$Collage.collage,
+                 return A2($Graphics$Collage.collage,
                  _v0._0,
-                 _v0._1,
+                 _v0._1)(A2($List.map,
+                 function (n) {
+                    return A2($Graphics$Collage.moveY,
+                    -20.0,
+                    n);
+                 },
                  _L.fromArray([background
+                              ,$Graphics$Collage.moveY($Basics.toFloat(_v0._1) / 2 - wpng)($Graphics$Collage.toForm(png))
                               ,circ
-                              ,dis]));
+                              ,dis])));
               }();}
          _U.badCase($moduleName,
-         "between lines 83 and 94");
+         "between lines 75 and 88");
       }();
    });
    var BrainGeo = F2(function (a,
@@ -5627,11 +5627,11 @@ Elm.WhereBrain.make = function (_elm) {
                             ,RawGeo: RawGeo
                             ,BrainGeo: BrainGeo
                             ,bg: bg
+                            ,png: png
                             ,specializeGeo: specializeGeo
                             ,bigFont: bigFont
                             ,medFont: medFont
-                            ,bigStyle: bigStyle
-                            ,medStyle: medStyle
+                            ,iuStyle: iuStyle
                             ,distMessage: distMessage
                             ,scene: scene
                             ,main: main};

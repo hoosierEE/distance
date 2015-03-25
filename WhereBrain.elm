@@ -1,18 +1,20 @@
 module WhereBrain where
 
-import Graphics.Element (Element, container, middle, flow, down)
+import Graphics.Element (..)
 import Graphics.Collage (..)
 import Color (..)
 import Signal (..)
-import List (minimum)
+import List
 import Text
 import Window
+
 -- geolocation events imported from JavaScript
 type alias RawGeo = { lat:Float,lon:Float,hdg:Float }
 port geo : Signal RawGeo
 type alias BrainGeo = { distance:Float, direction:Float }
 bg : BrainGeo
 bg = { distance = -1.0, direction = 361.0 }
+png = fittedImage 100 100 "flatbrain_white.png"
 
 -- MATH
 -- convert raw geolocation data into "BrainGeo" data, used by our app
@@ -43,30 +45,18 @@ bigFont =
 
 medFont : Text.Style
 medFont =
-    { typeface = [ "BentonSansBold", "sans" ]
-    , height   = Just 36
-    , color    = white
-    , bold     = False
-    , italic   = False
-    , line     = Nothing
+    { bigFont
+    | typeface <- [ "BentonSansRegular", "sans" ]
+    , height   <- Just 36
     }
 
-bigStyle : String -> Element
-bigStyle t =
-    let tt = Text.fromString t
-        st = Text.style bigFont tt
-    in Text.centered st
-
-medStyle : String -> Element
-medStyle t =
-    let tt = Text.fromString t
-        st = Text.style medFont tt
-    in Text.centered st
-
+iuStyle : Text.Style -> String -> Element
+iuStyle s t = Text.fromString t |> Text.style s |> Text.centered
+--iuStyle s t = Text.centered <| Text.style s <| Text.fromString t
 
 -- format meters as string
-distMessage : Float -> Element
-distMessage d =
+distMessage : Float -> Float -> Element
+distMessage s d =
     let foot x = x * 3.281 -- meters to feet
         mile x = x * 0.62137 / 1000 -- meters to miles
         inch x = 12 * foot x -- meters to inches
@@ -75,20 +65,24 @@ distMessage d =
                    | d < 1000  -> (foot d, "FEET")
                    | d < 10000 -> (mile d, "MILES")
                    | otherwise -> (kilo d, "KILOMETERS")
-    in flow down [ (bigStyle <| toString n), medStyle c ]
+        en = iuStyle bigFont <| toString <| floor n
+        ec = width (widthOf en) <| iuStyle medFont c
+    in flow down [en, ec]
 
 -- combine background and foreground
 scene : (Int, Int) -> RawGeo -> Element
 scene (w,h) g =
-    let tDis = distMessage <| .distance <| specializeGeo g
+    let tDis = distMessage mrad <| .distance <| specializeGeo g
         tDir = Text.asText <| .direction <| specializeGeo g
-        mrad = toFloat <| (minimum [w,h]) // 3
-        -- forms
+        mrad = (toFloat <| List.minimum [w,h]) / 3.0
+        wpng = widthOf png |> toFloat
         dis = toForm tDis
         background = rect (toFloat w) (toFloat h) |> filled red
-        circ = outlined (solid white) (circle mrad)
-    in collage w h
+        circ = outlined {defaultLine | width <- 10, color <- white} (circle mrad)
+    in
+       collage w h <| List.map (\n -> moveY -20.0 n)
        [ background
+       , png |> toForm |> moveY (toFloat h / 2 - wpng)
        , circ
        , dis
        ]
