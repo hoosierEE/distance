@@ -11,3 +11,7 @@ Uses HTML5's geolocation API to find the user's latitude and longitude, and calc
 Features:
 * shows distance and orientation (if available)
 * pretty colors
+
+TODO
+----
+Make sure orientation calculation is correct!
