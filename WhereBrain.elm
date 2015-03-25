@@ -33,7 +33,7 @@ specializeGeo g =
 -- SCENE
 bigFont : Text.Style
 bigFont =
-    { typeface = [ "BeltonSansBold", "sans" ]
+    { typeface = [ "BentonSansBold", "sans" ]
     , height   = Just 72
     , color    = white
     , bold     = False
@@ -43,7 +43,7 @@ bigFont =
 
 medFont : Text.Style
 medFont =
-    { typeface = [ "BeltonSansBold", "sans" ]
+    { typeface = [ "BentonSansBold", "sans" ]
     , height   = Just 36
     , color    = white
     , bold     = False

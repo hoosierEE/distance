@@ -5478,7 +5478,7 @@ Elm.WhereBrain.make = function (_elm) {
                  ,height: $Maybe.Just(36)
                  ,italic: false
                  ,line: $Maybe.Nothing
-                 ,typeface: _L.fromArray(["BeltonSansBold"
+                 ,typeface: _L.fromArray(["BentonSansBold"
                                          ,"sans"])};
    var medStyle = function (t) {
       return function () {
@@ -5495,7 +5495,7 @@ Elm.WhereBrain.make = function (_elm) {
                  ,height: $Maybe.Just(72)
                  ,italic: false
                  ,line: $Maybe.Nothing
-                 ,typeface: _L.fromArray(["BeltonSansBold"
+                 ,typeface: _L.fromArray(["BentonSansBold"
                                          ,"sans"])};
    var bigStyle = function (t) {
       return function () {
