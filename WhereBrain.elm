@@ -27,15 +27,16 @@ geodesy g = -- convert raw latitude, longitude (, and heading?) to distance and 
 -- distance to "convenient" string
 distString : Float -> String
 distString d = -- convert a distance in meters to more convenient units
-    if | d < 100 -> toString d ++ " meters"
-       | d < 1000 -> toString (d / 1000) ++ " kilometers"
-       | otherwise -> "really far"
+    if | d < 100 -> toString (floor d) ++ " meters"
+       | d > 1000 -> toString (floor (0.62137 * d / 1000)) ++ " miles"
+       | otherwise -> toString (floor (d /1000)) ++ " km"
 
 -- SCENE
 --------
+scene : (Int, Int) -> { a | lat : Float, lon : Float } -> Element
 scene (w,h) g =
-    let tDir = Text.plainText (distString ((geodesy g).distance))
-        tDis = Text.asText (geodesy g).direction
+    let tDir = Text.plainText <| distString <| .distance <| geodesy g
+        tDis = Text.asText <| .direction <| geodesy g
         boths = flow down [tDir, tDis]
     in container w h middle boths
 

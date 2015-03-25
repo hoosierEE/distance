@@ -4539,11 +4539,13 @@ Elm.WhereBrain.make = function (_elm) {
    var distString = function (d) {
       return _U.cmp(d,
       100) < 0 ? A2($Basics._op["++"],
-      $Basics.toString(d),
+      $Basics.toString($Basics.floor(d)),
       " meters") : _U.cmp(d,
-      1000) < 0 ? A2($Basics._op["++"],
-      $Basics.toString(d / 1000),
-      " kilometers") : " really far";
+      1000) > 0 ? A2($Basics._op["++"],
+      $Basics.toString($Basics.floor(0.62137 * d / 1000)),
+      " miles") : A2($Basics._op["++"],
+      $Basics.toString($Basics.floor(d / 1000)),
+      " km");
    };
    var bg = {_: {}
             ,direction: 361.0
@@ -4572,8 +4574,12 @@ Elm.WhereBrain.make = function (_elm) {
          switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
-                 var tDis = $Text.asText(geodesy(g).direction);
-                 var tDir = $Text.plainText(distString(geodesy(g).distance));
+                 var tDis = $Text.asText(function (_) {
+                    return _.direction;
+                 }(geodesy(g)));
+                 var tDir = $Text.plainText(distString(function (_) {
+                    return _.distance;
+                 }(geodesy(g))));
                  var boths = A2($Graphics$Element.flow,
                  $Graphics$Element.down,
                  _L.fromArray([tDir,tDis]));
