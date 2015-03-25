@@ -5472,13 +5472,30 @@ Elm.WhereBrain.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Window = Elm.Window.make(_elm);
-   var bigFont = {_: {}
+   var medFont = {_: {}
                  ,bold: false
                  ,color: $Color.white
                  ,height: $Maybe.Just(36)
                  ,italic: false
                  ,line: $Maybe.Nothing
-                 ,typeface: _L.fromArray(["Belton Sans"
+                 ,typeface: _L.fromArray(["BeltonSansBold"
+                                         ,"sans"])};
+   var medStyle = function (t) {
+      return function () {
+         var tt = $Text.fromString(t);
+         var st = A2($Text.style,
+         medFont,
+         tt);
+         return $Text.centered(st);
+      }();
+   };
+   var bigFont = {_: {}
+                 ,bold: false
+                 ,color: $Color.white
+                 ,height: $Maybe.Just(72)
+                 ,italic: false
+                 ,line: $Maybe.Nothing
+                 ,typeface: _L.fromArray(["BeltonSansBold"
                                          ,"sans"])};
    var bigStyle = function (t) {
       return function () {
@@ -5491,8 +5508,8 @@ Elm.WhereBrain.make = function (_elm) {
    };
    var distMessage = function (d) {
       return function () {
-         var pstr = function ($) {
-            return $Basics.toString($Basics.floor($));
+         var kilo = function (x) {
+            return x / 1000;
          };
          var mile = function (x) {
             return x * 0.62137 / 1000;
@@ -5503,18 +5520,24 @@ Elm.WhereBrain.make = function (_elm) {
          var inch = function (x) {
             return 12 * foot(x);
          };
-         return _U.cmp(d,
-         100) < 0 ? bigStyle(A2($Basics._op["++"],
-         pstr(inch(d)),
-         " inches")) : _U.cmp(d,
-         1000) < 0 ? bigStyle(A2($Basics._op["++"],
-         pstr(foot(d)),
-         " feet")) : _U.cmp(d,
-         10000) < 0 ? bigStyle(A2($Basics._op["++"],
-         pstr(mile(d)),
-         " miles")) : bigStyle(A2($Basics._op["++"],
-         pstr(d / 1000),
-         " km"));
+         var $ = _U.cmp(d,
+         100) < 0 ? {ctor: "_Tuple2"
+                    ,_0: inch(d)
+                    ,_1: "INCHES"} : _U.cmp(d,
+         1000) < 0 ? {ctor: "_Tuple2"
+                     ,_0: foot(d)
+                     ,_1: "FEET"} : _U.cmp(d,
+         10000) < 0 ? {ctor: "_Tuple2"
+                      ,_0: mile(d)
+                      ,_1: "MILES"} : {ctor: "_Tuple2"
+                                      ,_0: kilo(d)
+                                      ,_1: "KILOMETERS"},
+         n = $._0,
+         c = $._1;
+         return A2($Graphics$Element.flow,
+         $Graphics$Element.down,
+         _L.fromArray([bigStyle($Basics.toString(n))
+                      ,medStyle(c)]));
       }();
    };
    var bg = {_: {}
@@ -5567,7 +5590,7 @@ Elm.WhereBrain.make = function (_elm) {
                               ,dis]));
               }();}
          _U.badCase($moduleName,
-         "between lines 67 and 78");
+         "between lines 83 and 94");
       }();
    });
    var BrainGeo = F2(function (a,
@@ -5606,7 +5629,9 @@ Elm.WhereBrain.make = function (_elm) {
                             ,bg: bg
                             ,specializeGeo: specializeGeo
                             ,bigFont: bigFont
+                            ,medFont: medFont
                             ,bigStyle: bigStyle
+                            ,medStyle: medStyle
                             ,distMessage: distMessage
                             ,scene: scene
                             ,main: main};

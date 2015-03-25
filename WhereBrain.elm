@@ -33,7 +33,17 @@ specializeGeo g =
 -- SCENE
 bigFont : Text.Style
 bigFont =
-    { typeface = [ "Belton Sans", "sans" ]
+    { typeface = [ "BeltonSansBold", "sans" ]
+    , height   = Just 72
+    , color    = white
+    , bold     = False
+    , italic   = False
+    , line     = Nothing
+    }
+
+medFont : Text.Style
+medFont =
+    { typeface = [ "BeltonSansBold", "sans" ]
     , height   = Just 36
     , color    = white
     , bold     = False
@@ -41,12 +51,18 @@ bigFont =
     , line     = Nothing
     }
 
--- style some text with bigFont
 bigStyle : String -> Element
 bigStyle t =
     let tt = Text.fromString t
         st = Text.style bigFont tt
     in Text.centered st
+
+medStyle : String -> Element
+medStyle t =
+    let tt = Text.fromString t
+        st = Text.style medFont tt
+    in Text.centered st
+
 
 -- format meters as string
 distMessage : Float -> Element
@@ -54,12 +70,12 @@ distMessage d =
     let foot x = x * 3.281 -- meters to feet
         mile x = x * 0.62137 / 1000 -- meters to miles
         inch x = 12 * foot x -- meters to inches
-        pstr = toString << floor -- round down, convert to String
-    in
-       if | d < 100 -> bigStyle <| pstr (inch d) ++ " inches"
-          | d < 1000 -> bigStyle <| pstr (foot d) ++ " feet"
-          | d < 10000 -> bigStyle <| pstr (mile d) ++ " miles"
-          | otherwise -> bigStyle <| pstr (d / 1000) ++ " km"
+        kilo x = x / 1000
+        (n,c) = if | d < 100   -> (inch d, "INCHES")
+                   | d < 1000  -> (foot d, "FEET")
+                   | d < 10000 -> (mile d, "MILES")
+                   | otherwise -> (kilo d, "KILOMETERS")
+    in flow down [ (bigStyle <| toString n), medStyle c ]
 
 -- combine background and foreground
 scene : (Int, Int) -> RawGeo -> Element
