@@ -1,17 +1,8 @@
 Where is Brain? There is Brain!
 ===============================
-IU Brain is on a plane!
+This is a webapp that tells you how far you are from [#iubrain](https://twitter.com/iubrain).
 
-Got a hunger for knowledge?  So does [#iubrain](https://twitter.com/iubrain).
+It requires permission to use your browser's Geolocation features.
 
-Example App
------------
-Uses HTML5's geolocation API to find the user's latitude and longitude, and calculate the distance between you and the #iubrain.
+This app was produced by Indiana University's Psychological and Brain Sciences department.
 
-Features:
-* shows distance and orientation (if available)
-* pretty colors
-
-TODO
-----
-Make sure orientation calculation is correct!
