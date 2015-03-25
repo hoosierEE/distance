@@ -5467,7 +5467,6 @@ Elm.WhereBrain.make = function (_elm) {
    $Color = Elm.Color.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
-   $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
@@ -5489,8 +5488,7 @@ Elm.WhereBrain.make = function (_elm) {
                                            ,"sans"])]
                             ,["height",$Maybe.Just(36)]],
    bigFont);
-   var distMessage = F2(function (s,
-   d) {
+   var distMessage = function (d) {
       return function () {
          var kilo = function (x) {
             return x / 1000;
@@ -5526,7 +5524,7 @@ Elm.WhereBrain.make = function (_elm) {
          $Graphics$Element.down,
          _L.fromArray([en,ec]));
       }();
-   });
+   };
    var png = A3($Graphics$Element.fittedImage,
    100,
    100,
@@ -5534,7 +5532,7 @@ Elm.WhereBrain.make = function (_elm) {
    var bg = {_: {}
             ,direction: 361.0
             ,distance: -1.0};
-   var specializeGeo = function (g) {
+   var bfrGeo = function (g) {
       return function () {
          var lon = $Basics.degrees(g.lon);
          var lat = $Basics.degrees(g.lat);
@@ -5558,39 +5556,42 @@ Elm.WhereBrain.make = function (_elm) {
          switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
-                 var background = $Graphics$Collage.filled($Color.red)(A2($Graphics$Collage.rect,
-                 $Basics.toFloat(_v0._0),
-                 $Basics.toFloat(_v0._1)));
+                 var appLineStyle = _U.replace([["width"
+                                                ,10]
+                                               ,["color",$Color.white]],
+                 $Graphics$Collage.defaultLine);
                  var wpng = $Basics.toFloat($Graphics$Element.widthOf(png));
-                 var mrad = $Basics.toFloat($List.minimum(_L.fromArray([_v0._0
-                                                                       ,_v0._1]))) / 3.0;
-                 var circ = A2($Graphics$Collage.outlined,
-                 _U.replace([["width",10]
-                            ,["color",$Color.white]],
-                 $Graphics$Collage.defaultLine),
-                 $Graphics$Collage.circle(mrad));
-                 var tDir = $Text.asText(function (_) {
+                 var gDir = function (_) {
                     return _.direction;
-                 }(specializeGeo(g)));
-                 var tDis = distMessage(mrad)(function (_) {
+                 }(bfrGeo(g));
+                 var eWords = distMessage(function (_) {
                     return _.distance;
-                 }(specializeGeo(g)));
-                 var dis = $Graphics$Collage.toForm(tDis);
-                 return A2($Graphics$Collage.collage,
+                 }(bfrGeo(g)));
+                 var words = $Graphics$Collage.toForm(eWords);
+                 var wWords = $Basics.toFloat($Graphics$Element.widthOf(eWords));
+                 var arrowLine = $Graphics$Collage.traced(appLineStyle)(A2($Graphics$Collage.segment,
+                 $Basics.fromPolar({ctor: "_Tuple2"
+                                   ,_0: wWords - 50
+                                   ,_1: gDir}),
+                 $Basics.fromPolar({ctor: "_Tuple2"
+                                   ,_0: wWords + 50
+                                   ,_1: gDir})));
+                 var circ = A2($Graphics$Collage.outlined,
+                 appLineStyle,
+                 $Graphics$Collage.circle(wWords));
+                 return $Graphics$Element.color($Color.red)(A3($Graphics$Element.container,
                  _v0._0,
-                 _v0._1)(A2($List.map,
-                 function (n) {
-                    return A2($Graphics$Collage.moveY,
-                    -20.0,
-                    n);
-                 },
-                 _L.fromArray([background
-                              ,$Graphics$Collage.moveY($Basics.toFloat(_v0._1) / 2 - wpng)($Graphics$Collage.toForm(png))
+                 _v0._1,
+                 $Graphics$Element.middle)(A3($Graphics$Collage.collage,
+                 _v0._0,
+                 _v0._1,
+                 _L.fromArray([$Graphics$Collage.moveY($Basics.toFloat(_v0._1) / 2 - wpng)($Graphics$Collage.toForm(png))
+                              ,arrowLine
                               ,circ
-                              ,dis])));
+                              ,words]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 75 and 88");
+         "between lines 70 and 89");
       }();
    });
    var BrainGeo = F2(function (a,
@@ -5628,7 +5629,7 @@ Elm.WhereBrain.make = function (_elm) {
                             ,BrainGeo: BrainGeo
                             ,bg: bg
                             ,png: png
-                            ,specializeGeo: specializeGeo
+                            ,bfrGeo: bfrGeo
                             ,bigFont: bigFont
                             ,medFont: medFont
                             ,iuStyle: iuStyle

@@ -18,8 +18,8 @@ png = fittedImage 100 100 "flatbrain_white.png"
 
 -- MATH
 -- convert raw geolocation data into "BrainGeo" data, used by our app
-specializeGeo : RawGeo -> BrainGeo
-specializeGeo g =
+bfrGeo : RawGeo -> BrainGeo
+bfrGeo g =
     let googEarthRadius = 6378137.0 -- meters used by Google Maps
         brainLat = degrees 39.171989
         brainLon = degrees -86.520674
@@ -30,62 +30,63 @@ specializeGeo g =
         dir = atan2(sin(dLon) * cos(brainLat)) (cos(lat)*sin(brainLat) - sin(lat)*cos(brainLat)*cos(dLon))
     in
        { bg | distance <- dist
-            , direction <- dir }
+       , direction <- dir }
 
 -- SCENE
-bigFont : Text.Style
 bigFont =
     { typeface = [ "BentonSansBold", "sans" ]
     , height   = Just 72
     , color    = white
     , bold     = False
     , italic   = False
-    , line     = Nothing
-    }
+    , line     = Nothing }
 
-medFont : Text.Style
 medFont =
     { bigFont
     | typeface <- [ "BentonSansRegular", "sans" ]
-    , height   <- Just 36
-    }
+    , height   <- Just 36 }
 
-iuStyle : Text.Style -> String -> Element
 iuStyle s t = Text.fromString t |> Text.style s |> Text.centered
---iuStyle s t = Text.centered <| Text.style s <| Text.fromString t
 
 -- format meters as string
-distMessage : Float -> Float -> Element
-distMessage s d =
+distMessage : Float -> Element
+distMessage d =
     let foot x = x * 3.281 -- meters to feet
         mile x = x * 0.62137 / 1000 -- meters to miles
         inch x = 12 * foot x -- meters to inches
         kilo x = x / 1000
-        (n,c) = if | d < 100   -> (inch d, "INCHES")
-                   | d < 1000  -> (foot d, "FEET")
-                   | d < 10000 -> (mile d, "MILES")
-                   | otherwise -> (kilo d, "KILOMETERS")
         en = iuStyle bigFont <| toString <| floor n
         ec = width (widthOf en) <| iuStyle medFont c
+        (n,c) =
+            if | d < 100   -> (inch d, "INCHES")
+               | d < 1000  -> (foot d, "FEET")
+               | d < 10000 -> (mile d, "MILES")
+               | otherwise -> (kilo d, "KILOMETERS")
     in flow down [en, ec]
 
 -- combine background and foreground
 scene : (Int, Int) -> RawGeo -> Element
 scene (w,h) g =
-    let tDis = distMessage mrad <| .distance <| specializeGeo g
-        tDir = Text.asText <| .direction <| specializeGeo g
-        mrad = (toFloat <| List.minimum [w,h]) / 3.0
-        wpng = widthOf png |> toFloat
-        dis = toForm tDis
-        background = rect (toFloat w) (toFloat h) |> filled red
-        circ = outlined {defaultLine | width <- 10, color <- white} (circle mrad)
+    let
+        eWords    = distMessage (.distance (bfrGeo g))
+        words     = toForm eWords
+        gDir      = bfrGeo g |> .direction
+        wpng      = widthOf png |> toFloat
+        wWords    = toFloat <| widthOf eWords
+
+        appLineStyle = {defaultLine | width <- 10, color <- white }
+        arrowLine = segment (fromPolar(wWords - 50, gDir)) (fromPolar(wWords + 50, gDir)) |> traced appLineStyle
+        circ = outlined appLineStyle (circle wWords)
+
+        -- background = rect (toFloat w) (toFloat h) |> filled red
     in
-       collage w h <| List.map (\n -> moveY -20.0 n)
-       [ background
-       , png |> toForm |> moveY (toFloat h / 2 - wpng)
-       , circ
-       , dis
-       ]
+       color red <| container w h middle <|
+           collage w h
+           [ png |> toForm |> moveY (toFloat h / 2 - wpng)
+           , arrowLine
+           , circ
+           , words
+           ]
 
 -- RENDER
 main = scene <~ Window.dimensions ~ geo
