@@ -4568,16 +4568,20 @@ Elm.WhereBrain.make = function (_elm) {
    _L = _N.List.make(_elm),
    _P = _N.Ports.make(_elm),
    $moduleName = "WhereBrain",
-   $Basics = Elm.Basics.make(_elm),
    $Compass = Elm.Compass.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm);
    var scene = function (g) {
       return function () {
-         var vals = _L.fromArray([$Text.asText($Compass.convert(g))
-                                 ,$Text.asText($Compass.update(g))
-                                 ,$Text.asText(g)]);
+         var gg = $Compass.update(g);
+         var cc = $Compass.convert(g);
+         var vals = _L.fromArray([$Text.plainText("raw: ")
+                                 ,$Text.asText(g)
+                                 ,$Text.plainText("convert: ")
+                                 ,$Text.asText(cc)
+                                 ,$Text.plainText("update: ")
+                                 ,$Text.asText(gg)]);
          return A2($Graphics$Element.flow,
          $Graphics$Element.down,
          vals);
