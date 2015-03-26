@@ -6,7 +6,8 @@ var g = Elm.fullscreen(Elm.WhereBrain, {geo:{lat:defaultLat,lon:defaultLon,hdg:d
 
 
 // actually get the values
-navigator.geolocation.watchPosition(geoSuccess,geoError,geoOpts);
+navigator.geolocation.watchPosition(geoSuccess,geoError);
+//navigator.geolocation.watchPosition(geoSuccess,geoError,geoOpts);
 
 
 // callbacks and options

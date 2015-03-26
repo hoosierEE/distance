@@ -637,352 +637,105 @@ Elm.Color.make = function (_elm) {
                        ,darkCharcoal: darkCharcoal};
    return _elm.Color.values;
 };
-Elm.Graphics = Elm.Graphics || {};
-Elm.Graphics.Collage = Elm.Graphics.Collage || {};
-Elm.Graphics.Collage.make = function (_elm) {
+Elm.Compass = Elm.Compass || {};
+Elm.Compass.make = function (_elm) {
    "use strict";
-   _elm.Graphics = _elm.Graphics || {};
-   _elm.Graphics.Collage = _elm.Graphics.Collage || {};
-   if (_elm.Graphics.Collage.values)
-   return _elm.Graphics.Collage.values;
+   _elm.Compass = _elm.Compass || {};
+   if (_elm.Compass.values)
+   return _elm.Compass.values;
    var _op = {},
    _N = Elm.Native,
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    _P = _N.Ports.make(_elm),
-   $moduleName = "Graphics.Collage",
-   $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $Graphics$Element = Elm.Graphics.Element.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Native$Graphics$Collage = Elm.Native.Graphics.Collage.make(_elm),
-   $Transform2D = Elm.Transform2D.make(_elm);
-   var ngon = F2(function (n,r) {
-      return function () {
-         var m = $Basics.toFloat(n);
-         var t = 2 * $Basics.pi / m;
-         var f = function (i) {
-            return {ctor: "_Tuple2"
-                   ,_0: r * $Basics.cos(t * i)
-                   ,_1: r * $Basics.sin(t * i)};
-         };
-         return A2($List.map,
-         f,
-         _L.range(0,m - 1));
-      }();
-   });
-   var oval = F2(function (w,h) {
-      return function () {
-         var hh = h / 2;
-         var hw = w / 2;
-         var n = 50;
-         var t = 2 * $Basics.pi / n;
-         var f = function (i) {
-            return {ctor: "_Tuple2"
-                   ,_0: hw * $Basics.cos(t * i)
-                   ,_1: hh * $Basics.sin(t * i)};
-         };
-         return A2($List.map,
-         f,
-         _L.range(0,n - 1));
-      }();
-   });
-   var circle = function (r) {
-      return A2(oval,2 * r,2 * r);
-   };
-   var rect = F2(function (w,h) {
-      return function () {
-         var hh = h / 2;
-         var hw = w / 2;
-         return _L.fromArray([{ctor: "_Tuple2"
-                              ,_0: 0 - hw
-                              ,_1: 0 - hh}
-                             ,{ctor: "_Tuple2"
-                              ,_0: 0 - hw
-                              ,_1: hh}
-                             ,{ctor: "_Tuple2",_0: hw,_1: hh}
-                             ,{ctor: "_Tuple2"
-                              ,_0: hw
-                              ,_1: 0 - hh}]);
-      }();
-   });
-   var square = function (n) {
-      return A2(rect,n,n);
-   };
-   var polygon = function (points) {
-      return points;
-   };
-   var segment = F2(function (p1,
-   p2) {
-      return _L.fromArray([p1,p2]);
-   });
-   var path = function (ps) {
-      return ps;
-   };
-   var collage = $Native$Graphics$Collage.collage;
-   var alpha = F2(function (a,f) {
-      return _U.replace([["alpha"
-                         ,a]],
-      f);
-   });
-   var rotate = F2(function (t,f) {
-      return _U.replace([["theta"
-                         ,f.theta + t]],
-      f);
-   });
-   var scale = F2(function (s,f) {
-      return _U.replace([["scale"
-                         ,f.scale * s]],
-      f);
-   });
-   var moveY = F2(function (y,f) {
-      return _U.replace([["y"
-                         ,f.y + y]],
-      f);
-   });
-   var moveX = F2(function (x,f) {
-      return _U.replace([["x"
-                         ,f.x + x]],
-      f);
-   });
-   var move = F2(function (_v0,f) {
+   $moduleName = "Compass",
+   $Basics = Elm.Basics.make(_elm);
+   var toModel = function (_v0) {
       return function () {
          switch (_v0.ctor)
-         {case "_Tuple2":
-            return _U.replace([["x"
-                               ,f.x + _v0._0]
-                              ,["y",f.y + _v0._1]],
-              f);}
+         {case "_Tuple3": return {_: {}
+                                 ,angle: _v0._0
+                                 ,dist: _v0._1
+                                 ,units: _v0._2};}
          _U.badCase($moduleName,
-         "on line 179, column 20 to 48");
+         "on line 37, column 21 to 45");
       }();
-   });
-   var form = function (f) {
-      return {_: {}
-             ,alpha: 1
-             ,form: f
-             ,scale: 1
-             ,theta: 0
-             ,x: 0
-             ,y: 0};
    };
-   var Fill = function (a) {
-      return {ctor: "Fill",_0: a};
+   var simplify = function (_v5) {
+      return function () {
+         switch (_v5.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var mile = function (m) {
+                    return $Basics.floor(m * 0.62137 / 1000);
+                 };
+                 var foot = function (m) {
+                    return $Basics.floor(m * 3.281);
+                 };
+                 var inch = function (m) {
+                    return foot(m) * 12;
+                 };
+                 return _U.cmp(_v5._0,
+                 50) < 0 ? {ctor: "_Tuple3"
+                           ,_0: _v5._1
+                           ,_1: inch(_v5._0)
+                           ,_2: "INCHES"} : _U.cmp(_v5._0,
+                 1000) < 0 ? {ctor: "_Tuple3"
+                             ,_0: _v5._1
+                             ,_1: foot(_v5._0)
+                             ,_2: "FEET"} : {ctor: "_Tuple3"
+                                            ,_0: _v5._1
+                                            ,_1: mile(_v5._0)
+                                            ,_2: "MILES"};
+              }();}
+         _U.badCase($moduleName,
+         "between lines 27 and 33");
+      }();
    };
-   var Line = function (a) {
-      return {ctor: "Line",_0: a};
+   var convert = function (rg) {
+      return function () {
+         var lon = $Basics.degrees(rg.lon);
+         var lat = $Basics.degrees(rg.lat);
+         var brainLon = $Basics.degrees(-86.520674);
+         var dLon = $Basics.abs(lon - brainLon);
+         var brainLat = $Basics.degrees(39.171989);
+         var arg1 = $Basics.sin(dLon) * $Basics.cos(brainLat);
+         var arg2 = $Basics.cos(lat) * $Basics.sin(brainLat) - $Basics.sin(lat) * $Basics.cos(brainLat) * $Basics.cos(dLon);
+         var angl = A2($Basics.atan2,
+         arg1,
+         arg2);
+         var googRadius = 6378137.0;
+         var dist = googRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
+         return {ctor: "_Tuple2"
+                ,_0: dist
+                ,_1: angl};
+      }();
    };
-   var FGroup = F2(function (a,b) {
-      return {ctor: "FGroup"
-             ,_0: a
-             ,_1: b};
-   });
-   var group = function (fs) {
-      return form(A2(FGroup,
-      $Transform2D.identity,
-      fs));
+   var update = function (g) {
+      return toModel(simplify(convert(g)));
    };
-   var groupTransform = F2(function (matrix,
-   fs) {
-      return form(A2(FGroup,
-      matrix,
-      fs));
-   });
-   var FElement = function (a) {
-      return {ctor: "FElement"
-             ,_0: a};
-   };
-   var toForm = function (e) {
-      return form(FElement(e));
-   };
-   var FImage = F4(function (a,
+   var Model = F3(function (a,
    b,
-   c,
-   d) {
-      return {ctor: "FImage"
-             ,_0: a
-             ,_1: b
-             ,_2: c
-             ,_3: d};
-   });
-   var sprite = F4(function (w,
-   h,
-   pos,
-   src) {
-      return form(A4(FImage,
-      w,
-      h,
-      pos,
-      src));
-   });
-   var FShape = F2(function (a,b) {
-      return {ctor: "FShape"
-             ,_0: a
-             ,_1: b};
-   });
-   var fill = F2(function (style,
-   shape) {
-      return form(A2(FShape,
-      Fill(style),
-      shape));
-   });
-   var outlined = F2(function (style,
-   shape) {
-      return form(A2(FShape,
-      Line(style),
-      shape));
-   });
-   var FPath = F2(function (a,b) {
-      return {ctor: "FPath"
-             ,_0: a
-             ,_1: b};
-   });
-   var traced = F2(function (style,
-   path) {
-      return form(A2(FPath,
-      style,
-      path));
-   });
-   var LineStyle = F6(function (a,
-   b,
-   c,
-   d,
-   e,
-   f) {
+   c) {
       return {_: {}
-             ,cap: c
-             ,color: a
-             ,dashOffset: f
-             ,dashing: e
-             ,join: d
-             ,width: b};
+             ,angle: a
+             ,dist: b
+             ,units: c};
    });
-   var Clipped = {ctor: "Clipped"};
-   var Sharp = function (a) {
-      return {ctor: "Sharp",_0: a};
-   };
-   var Smooth = {ctor: "Smooth"};
-   var Padded = {ctor: "Padded"};
-   var Round = {ctor: "Round"};
-   var Flat = {ctor: "Flat"};
-   var defaultLine = {_: {}
-                     ,cap: Flat
-                     ,color: $Color.black
-                     ,dashOffset: 0
-                     ,dashing: _L.fromArray([])
-                     ,join: Sharp(10)
-                     ,width: 1};
-   var solid = function (clr) {
-      return _U.replace([["color"
-                         ,clr]],
-      defaultLine);
-   };
-   var dashed = function (clr) {
-      return _U.replace([["color"
-                         ,clr]
-                        ,["dashing"
-                         ,_L.fromArray([8,4])]],
-      defaultLine);
-   };
-   var dotted = function (clr) {
-      return _U.replace([["color"
-                         ,clr]
-                        ,["dashing"
-                         ,_L.fromArray([3,3])]],
-      defaultLine);
-   };
-   var Grad = function (a) {
-      return {ctor: "Grad",_0: a};
-   };
-   var gradient = F2(function (grad,
-   shape) {
-      return A2(fill,
-      Grad(grad),
-      shape);
-   });
-   var Texture = function (a) {
-      return {ctor: "Texture"
-             ,_0: a};
-   };
-   var textured = F2(function (src,
-   shape) {
-      return A2(fill,
-      Texture(src),
-      shape);
-   });
-   var Solid = function (a) {
-      return {ctor: "Solid",_0: a};
-   };
-   var filled = F2(function (color,
-   shape) {
-      return A2(fill,
-      Solid(color),
-      shape);
-   });
-   var Form = F6(function (a,
+   var RawGeo = F3(function (a,
    b,
-   c,
-   d,
-   e,
-   f) {
+   c) {
       return {_: {}
-             ,alpha: e
-             ,form: f
-             ,scale: b
-             ,theta: a
-             ,x: c
-             ,y: d};
+             ,hdg: c
+             ,lat: a
+             ,lon: b};
    });
-   _elm.Graphics.Collage.values = {_op: _op
-                                  ,Form: Form
-                                  ,Solid: Solid
-                                  ,Texture: Texture
-                                  ,Grad: Grad
-                                  ,Flat: Flat
-                                  ,Round: Round
-                                  ,Padded: Padded
-                                  ,Smooth: Smooth
-                                  ,Sharp: Sharp
-                                  ,Clipped: Clipped
-                                  ,LineStyle: LineStyle
-                                  ,defaultLine: defaultLine
-                                  ,solid: solid
-                                  ,dashed: dashed
-                                  ,dotted: dotted
-                                  ,FPath: FPath
-                                  ,FShape: FShape
-                                  ,FImage: FImage
-                                  ,FElement: FElement
-                                  ,FGroup: FGroup
-                                  ,Line: Line
-                                  ,Fill: Fill
-                                  ,form: form
-                                  ,fill: fill
-                                  ,filled: filled
-                                  ,textured: textured
-                                  ,gradient: gradient
-                                  ,outlined: outlined
-                                  ,traced: traced
-                                  ,sprite: sprite
-                                  ,toForm: toForm
-                                  ,group: group
-                                  ,groupTransform: groupTransform
-                                  ,move: move
-                                  ,moveX: moveX
-                                  ,moveY: moveY
-                                  ,scale: scale
-                                  ,rotate: rotate
-                                  ,alpha: alpha
-                                  ,collage: collage
-                                  ,path: path
-                                  ,segment: segment
-                                  ,polygon: polygon
-                                  ,rect: rect
-                                  ,square: square
-                                  ,oval: oval
-                                  ,circle: circle
-                                  ,ngon: ngon};
-   return _elm.Graphics.Collage.values;
+   _elm.Compass.values = {_op: _op
+                         ,convert: convert
+                         ,update: update
+                         ,RawGeo: RawGeo
+                         ,Model: Model};
+   return _elm.Compass.values;
 };
 Elm.Graphics = Elm.Graphics || {};
 Elm.Graphics.Element = Elm.Graphics.Element || {};
@@ -1989,425 +1742,6 @@ Elm.Native.Color.make = function(elm) {
         toCss:toCss
     };
 
-};
-
-
-// setup
-Elm.Native = Elm.Native || {};
-Elm.Native.Graphics = Elm.Native.Graphics || {};
-Elm.Native.Graphics.Collage = Elm.Native.Graphics.Collage || {};
-
-// definition
-Elm.Native.Graphics.Collage.make = function(localRuntime) {
-    'use strict';
-
-    // attempt to short-circuit
-    localRuntime.Native = localRuntime.Native || {};
-    localRuntime.Native.Graphics = localRuntime.Native.Graphics || {};
-    localRuntime.Native.Graphics.Collage = localRuntime.Native.Graphics.Collage || {};
-    if ('values' in localRuntime.Native.Graphics.Collage) {
-        return localRuntime.Native.Graphics.Collage.values;
-    }
-
-    // okay, we cannot short-ciruit, so now we define everything
-    var Color = Elm.Native.Color.make(localRuntime);
-    var List = Elm.Native.List.make(localRuntime);
-    var Transform = Elm.Transform2D.make(localRuntime);
-
-    var Element = Elm.Graphics.Element.make(localRuntime);
-    var NativeElement = Elm.Native.Graphics.Element.make(localRuntime);
-
-
-    function trace(ctx, path) {
-        var points = List.toArray(path);
-        var i = points.length - 1;
-        if (i <= 0) {
-            return;
-        }
-        ctx.moveTo(points[i]._0, points[i]._1);
-        while (i--) {
-            ctx.lineTo(points[i]._0, points[i]._1);
-        }
-        if (path.closed) {
-            i = points.length - 1;
-            ctx.lineTo(points[i]._0, points[i]._1);
-        }
-    }
-
-    function line(ctx,style,path) {
-        (style.dashing.ctor === '[]')
-            ? trace(ctx, path)
-            : customLineHelp(ctx, style, path);
-        ctx.scale(1,-1);
-        ctx.stroke();
-    }
-
-    function customLineHelp(ctx, style, path) {
-        var points = List.toArray(path);
-        if (path.closed) {
-            points.push(points[0]);
-        }
-        var pattern = List.toArray(style.dashing);
-        var i = points.length - 1;
-        if (i <= 0) {
-            return;
-        }
-        var x0 = points[i]._0, y0 = points[i]._1;
-        var x1=0, y1=0, dx=0, dy=0, remaining=0, nx=0, ny=0;
-        var pindex = 0, plen = pattern.length;
-        var draw = true, segmentLength = pattern[0];
-        ctx.moveTo(x0,y0);
-        while (i--) {
-            x1 = points[i]._0; y1 = points[i]._1;
-            dx = x1 - x0; dy = y1 - y0;
-            remaining = Math.sqrt(dx * dx + dy * dy);
-            while (segmentLength <= remaining) {
-                x0 += dx * segmentLength / remaining;
-                y0 += dy * segmentLength / remaining;
-                ctx[draw ? 'lineTo' : 'moveTo'](x0, y0);
-                // update starting position
-                dx = x1 - x0; dy = y1 - y0;
-                remaining = Math.sqrt(dx * dx + dy * dy);
-                // update pattern
-                draw = !draw;
-                pindex = (pindex + 1) % plen;
-                segmentLength = pattern[pindex];
-            }
-            if (remaining > 0) {
-                ctx[draw ? 'lineTo' : 'moveTo'](x1, y1);
-                segmentLength -= remaining;
-            }
-            x0 = x1; y0 = y1;
-        }
-    }
-
-    function drawLine(ctx, style, path) {
-        ctx.lineWidth = style.width;
-
-        var cap = style.cap.ctor;
-        ctx.lineCap = cap === 'Flat'
-            ? 'butt'
-            : cap === 'Round'
-                ? 'round'
-                : 'square';
-
-        var join = style.join.ctor;
-        ctx.lineJoin = join === 'Smooth'
-            ? 'round'
-            : join === 'Sharp'
-                ? 'miter'
-                : 'bevel';
-
-        ctx.miterLimit = style.join._0 || 10;
-        ctx.strokeStyle = Color.toCss(style.color);
-
-        return line(ctx, style, path);
-    }
-
-    function texture(redo, ctx, src) {
-        var img = new Image();
-        img.src = src;
-        img.onload = redo;
-        return ctx.createPattern(img, 'repeat');
-    }
-
-    function gradient(ctx, grad) {
-        var g;
-        var stops = [];
-        if (grad.ctor === 'Linear') {
-            var p0 = grad._0, p1 = grad._1;
-            g = ctx.createLinearGradient(p0._0, -p0._1, p1._0, -p1._1);
-            stops = List.toArray(grad._2);
-        } else {
-            var p0 = grad._0, p2 = grad._2;
-            g = ctx.createRadialGradient(p0._0, -p0._1, grad._1, p2._0, -p2._1, grad._3);
-            stops = List.toArray(grad._4);
-        }
-        var len = stops.length;
-        for (var i = 0; i < len; ++i) {
-            var stop = stops[i];
-            g.addColorStop(stop._0, Color.toCss(stop._1));
-        }
-        return g;
-    }
-
-    function drawShape(redo, ctx, style, path) {
-        trace(ctx, path);
-        var sty = style.ctor;
-        ctx.fillStyle = sty === 'Solid'
-            ? Color.toCss(style._0)
-            : sty === 'Texture'
-                ? texture(redo, ctx, style._0)
-                : gradient(ctx, style._0);
-
-        ctx.scale(1,-1);
-        ctx.fill();
-    }
-
-    function drawImage(redo, ctx, form) {
-        var img = new Image();
-        img.onload = redo;
-        img.src = form._3;
-        var w = form._0,
-            h = form._1,
-            pos = form._2,
-            srcX = pos._0,
-            srcY = pos._1,
-            srcW = w,
-            srcH = h,
-            destX = -w/2,
-            destY = -h/2,
-            destW = w,
-            destH = h;
-
-        ctx.scale(1,-1);
-        ctx.drawImage(img, srcX, srcY, srcW, srcH, destX, destY, destW, destH);
-    }
-
-    function renderForm(redo, ctx, form) {
-        ctx.save();
-        var x = form.x, y = form.y, theta = form.theta, scale = form.scale;
-        if (x !== 0 || y !== 0) ctx.translate(x, y);
-        if (theta !== 0) ctx.rotate(theta);
-        if (scale !== 1) ctx.scale(scale,scale);
-        if (form.alpha !== 1) ctx.globalAlpha = ctx.globalAlpha * form.alpha;
-        ctx.beginPath();
-        var f = form.form;
-        switch(f.ctor) {
-        case 'FPath' : drawLine(ctx, f._0, f._1); break;
-        case 'FImage': drawImage(redo, ctx, f); break;
-        case 'FShape':
-          if (f._0.ctor === 'Line') {
-            f._1.closed = true;
-            drawLine(ctx, f._0._0, f._1);
-          } else {
-            drawShape(redo, ctx, f._0._0, f._1);
-          }
-        break;
-        }
-        ctx.restore();
-    }
-
-    function formToMatrix(form) {
-       var scale = form.scale;
-       var matrix = A6( Transform.matrix, scale, 0, 0, scale, form.x, form.y );
-
-       var theta = form.theta
-       if (theta !== 0) {
-           matrix = A2( Transform.multiply, matrix, Transform.rotation(theta) );
-       }
-
-       return matrix;
-    }
-
-    function str(n) {
-        if (n < 0.00001 && n > -0.00001) return 0;
-        return n;
-    }
-
-    function makeTransform(w, h, form, matrices) {
-        var props = form.form._0.props;
-        var m = A6( Transform.matrix, 1, 0, 0, -1,
-                    (w - props.width ) / 2,
-                    (h - props.height) / 2 );
-        var len = matrices.length;
-        for (var i = 0; i < len; ++i) {
-            m = A2( Transform.multiply, m, matrices[i] );
-        }
-        m = A2( Transform.multiply, m, formToMatrix(form) );
-
-        return 'matrix(' + str( m[0]) + ', ' + str( m[3]) + ', ' +
-                           str(-m[1]) + ', ' + str(-m[4]) + ', ' +
-                           str( m[2]) + ', ' + str( m[5]) + ')';
-    }
-
-    function stepperHelp(list) {
-        var arr = List.toArray(list);
-        var i = 0;
-        function peekNext() {
-            return i < arr.length ? arr[i].form.ctor : '';
-        }
-        // assumes that there is a next element
-        function next() {
-            var out = arr[i];
-            ++i;
-            return out;
-        }
-        return {
-            peekNext:peekNext,
-            next:next
-        };
-    }
-
-    function formStepper(forms) {
-        var ps = [stepperHelp(forms)];
-        var matrices = [];
-        var alphas = [];
-        function peekNext() {
-            var len = ps.length;
-            var formType = '';
-            for (var i = 0; i < len; ++i ) {
-                if (formType = ps[i].peekNext()) return formType;
-            }
-            return '';
-        }
-        // assumes that there is a next element
-        function next(ctx) {
-            while (!ps[0].peekNext()) {
-                ps.shift();
-                matrices.pop();
-                alphas.shift();
-                if (ctx) { ctx.restore(); }
-            }
-            var out = ps[0].next();
-            var f = out.form;
-            if (f.ctor === 'FGroup') {
-                ps.unshift(stepperHelp(f._1));
-                var m = A2(Transform.multiply, f._0, formToMatrix(out));
-                ctx.save();
-                ctx.transform(m[0], m[3], m[1], m[4], m[2], m[5]);
-                matrices.push(m);
-
-                var alpha = (alphas[0] || 1) * out.alpha;
-                alphas.unshift(alpha);
-                ctx.globalAlpha = alpha;
-            }
-            return out;
-        }
-        function transforms() { return matrices; }
-        function alpha() { return alphas[0] || 1; }
-        return {
-            peekNext:peekNext,
-            next:next,
-            transforms:transforms,
-            alpha:alpha
-        };
-    }
-
-    function makeCanvas(w,h) {
-        var canvas = NativeElement.createNode('canvas');
-        canvas.style.width  = w + 'px';
-        canvas.style.height = h + 'px';
-        canvas.style.display = "block";
-        canvas.style.position = "absolute";
-        canvas.width  = w;
-        canvas.height = h;
-        return canvas;
-    }
-
-    function render(model) {
-        var div = NativeElement.createNode('div');
-        div.style.overflow = 'hidden';
-        div.style.position = 'relative';
-        update(div, model, model);
-        return div;
-    }
-
-    function nodeStepper(w,h,div) {
-        var kids = div.childNodes;
-        var i = 0;
-        function transform(transforms, ctx) {
-            ctx.translate(w/2, h/2);
-            ctx.scale(1,-1);
-            var len = transforms.length;
-            for (var i = 0; i < len; ++i) {
-                var m = transforms[i];
-                ctx.save();
-                ctx.transform(m[0], m[3], m[1], m[4], m[2], m[5]);
-            }
-            return ctx;
-        }
-        function nextContext(transforms) {
-            while (i < kids.length) {
-                var node = kids[i];
-                if (node.getContext) {
-                    node.width = w;
-                    node.height = h;
-                    node.style.width = w + 'px';
-                    node.style.height = h + 'px';
-                    ++i;
-                    return transform(transforms, node.getContext('2d'));
-                }
-                div.removeChild(node);
-            }
-            var canvas = makeCanvas(w,h);
-            div.appendChild(canvas);
-            // we have added a new node, so we must step our position
-            ++i;
-            return transform(transforms, canvas.getContext('2d'));
-        }
-        function addElement(matrices, alpha, form) {
-            var kid = kids[i];
-            var elem = form.form._0;
-
-            var node = (!kid || kid.getContext)
-                ? NativeElement.render(elem)
-                : NativeElement.update(kid, kid.oldElement, elem);
-
-            node.style.position = 'absolute';
-            node.style.opacity = alpha * form.alpha * elem.props.opacity;
-            NativeElement.addTransform(node.style, makeTransform(w, h, form, matrices));
-            node.oldElement = elem;
-            ++i;
-            if (!kid) {
-                div.appendChild(node);
-            } else {
-                div.insertBefore(node, kid);
-            }
-        }
-        function clearRest() {
-            while (i < kids.length) {
-                div.removeChild(kids[i]);
-            }
-        }
-        return { nextContext:nextContext, addElement:addElement, clearRest:clearRest };
-    }
-
-
-    function update(div, _, model) {
-        var w = model.w;
-        var h = model.h;
-
-        var forms = formStepper(model.forms);
-        var nodes = nodeStepper(w,h,div);
-        var ctx = null;
-        var formType = '';
-
-        while (formType = forms.peekNext()) {
-            // make sure we have context if we need it
-            if (ctx === null && formType !== 'FElement') {
-                ctx = nodes.nextContext(forms.transforms());
-                ctx.globalAlpha = forms.alpha();
-            }
-
-            var form = forms.next(ctx);
-            // if it is FGroup, all updates are made within formStepper when next is called.
-            if (formType === 'FElement') {
-                // update or insert an element, get a new context
-                nodes.addElement(forms.transforms(), forms.alpha(), form);
-                ctx = null;
-            } else if (formType !== 'FGroup') {
-                renderForm(function() { update(div, model, model); }, ctx, form);
-            }
-        }
-        nodes.clearRest();
-        return div;
-    }
-
-
-    function collage(w,h,forms) {
-        return A3(Element.newElement, w, h, {
-            ctor: 'Custom',
-            type: 'Collage',
-            render: render,
-            update: update,
-            model: {w:w, h:h, forms:forms}
-      	});
-    }
-
-    return localRuntime.Native.Graphics.Collage.values = {
-        collage:F3(collage)
-    };
 };
 
 
@@ -4463,106 +3797,6 @@ Elm.Native.Text.make = function(elm) {
     };
 };
 
-Elm.Native.Transform2D = {};
-Elm.Native.Transform2D.make = function(elm) {
-
- elm.Native = elm.Native || {};
- elm.Native.Transform2D = elm.Native.Transform2D || {};
- if (elm.Native.Transform2D.values) return elm.Native.Transform2D.values;
-
- var A;
- if (typeof Float32Array === 'undefined') {
-     A = function(arr) {
-         this.length = arr.length;
-         this[0] = arr[0];
-         this[1] = arr[1];
-         this[2] = arr[2];
-         this[3] = arr[3];
-         this[4] = arr[4];
-         this[5] = arr[5];
-     };
- } else {
-     A = Float32Array;
- }
-
- // layout of matrix in an array is
- //
- //   | m11 m12 dx |
- //   | m21 m22 dy |
- //   |  0   0   1 |
- //
- //  new A([ m11, m12, dx, m21, m22, dy ])
-
- var identity = new A([1,0,0,0,1,0]);
- function matrix(m11, m12, m21, m22, dx, dy) {
-     return new A([m11, m12, dx, m21, m22, dy]);
- }
- function rotation(t) {
-     var c = Math.cos(t);
-     var s = Math.sin(t);
-     return new A([c, -s, 0, s, c, 0]);
- }
- function rotate(t,m) {
-     var c = Math.cos(t);
-     var s = Math.sin(t);
-     var m11 = m[0], m12 = m[1], m21 = m[3], m22 = m[4];
-     return new A([m11*c + m12*s, -m11*s + m12*c, m[2],
-                   m21*c + m22*s, -m21*s + m22*c, m[5]]);
- }
- /*
- function move(xy,m) {
-     var x = xy._0;
-     var y = xy._1;
-     var m11 = m[0], m12 = m[1], m21 = m[3], m22 = m[4];
-     return new A([m11, m12, m11*x + m12*y + m[2],
-                   m21, m22, m21*x + m22*y + m[5]]);
- }
- function scale(s,m) { return new A([m[0]*s, m[1]*s, m[2], m[3]*s, m[4]*s, m[5]]); }
- function scaleX(x,m) { return new A([m[0]*x, m[1], m[2], m[3]*x, m[4], m[5]]); }
- function scaleY(y,m) { return new A([m[0], m[1]*y, m[2], m[3], m[4]*y, m[5]]); }
- function reflectX(m) { return new A([-m[0], m[1], m[2], -m[3], m[4], m[5]]); }
- function reflectY(m) { return new A([m[0], -m[1], m[2], m[3], -m[4], m[5]]); }
-
- function transform(m11, m21, m12, m22, mdx, mdy, n) {
-     var n11 = n[0], n12 = n[1], n21 = n[3], n22 = n[4], ndx = n[2], ndy = n[5];
-     return new A([m11*n11 + m12*n21,
-                   m11*n12 + m12*n22,
-                   m11*ndx + m12*ndy + mdx,
-                   m21*n11 + m22*n21,
-                   m21*n12 + m22*n22,
-                   m21*ndx + m22*ndy + mdy]);
- }
- */
- function multiply(m, n) {
-     var m11 = m[0], m12 = m[1], m21 = m[3], m22 = m[4], mdx = m[2], mdy = m[5];
-     var n11 = n[0], n12 = n[1], n21 = n[3], n22 = n[4], ndx = n[2], ndy = n[5];
-     return new A([m11*n11 + m12*n21,
-                   m11*n12 + m12*n22,
-                   m11*ndx + m12*ndy + mdx,
-                   m21*n11 + m22*n21,
-                   m21*n12 + m22*n22,
-                   m21*ndx + m22*ndy + mdy]);
- }
-
- return elm.Native.Transform2D.values = {
-     identity:identity,
-     matrix:F6(matrix),
-     rotation:rotation,
-     multiply:F2(multiply)
-     /*
-     transform:F7(transform),
-     rotate:F2(rotate),
-     move:F2(move),
-     scale:F2(scale),
-     scaleX:F2(scaleX),
-     scaleY:F2(scaleY),
-     reflectX:reflectX,
-     reflectY:reflectY
-     */
- };
-
-};
-
 Elm.Native = Elm.Native || {};
 Elm.Native.Utils = {};
 Elm.Native.Utils.make = function(localRuntime) {
@@ -4867,69 +4101,6 @@ Elm.Native.Utils.make = function(localRuntime) {
         badIf: badIf,
         badPort: badPort
     };
-};
-
-Elm.Native = Elm.Native || {};
-Elm.Native.Window = {};
-Elm.Native.Window.make = function(localRuntime) {
-
-    localRuntime.Native = localRuntime.Native || {};
-    localRuntime.Native.Window = localRuntime.Native.Window || {};
-    if (localRuntime.Native.Window.values) {
-        return localRuntime.Native.Window.values;
-    }
-
-    var Signal = Elm.Signal.make(localRuntime);
-    var NS = Elm.Native.Signal.make(localRuntime);
-    var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
-
-    function getWidth() {
-        return localRuntime.node.clientWidth;
-    }
-    function getHeight() {
-        if (localRuntime.isFullscreen()) {
-            return window.innerHeight;
-        }
-        return localRuntime.node.clientHeight;
-    }
-
-    var dimensions = NS.input(Tuple2(getWidth(), getHeight()));
-    dimensions.defaultNumberOfKids = 2;
-
-    // Do not move width and height into Elm. By setting the default number of kids,
-    // the resize listener can be detached.
-    var width  = A2(Signal.map, function(p){return p._0;}, dimensions);
-    width.defaultNumberOfKids = 0;
-
-    var height = A2(Signal.map, function(p){return p._1;}, dimensions);
-    height.defaultNumberOfKids = 0;
-
-    function resizeIfNeeded() {
-        // Do not trigger event if the dimensions have not changed.
-        // This should be most of the time.
-        var w = getWidth();
-        var h = getHeight();
-        if (dimensions.value._0 === w && dimensions.value._1 === h) return;
-
-        setTimeout(function () {
-            // Check again to see if the dimensions have changed.
-            // It is conceivable that the dimensions have changed
-            // again while some other event was being processed.
-            var w = getWidth();
-            var h = getHeight();
-            if (dimensions.value._0 === w && dimensions.value._1 === h) return;
-            localRuntime.notify(dimensions.id, Tuple2(w,h));
-        }, 0);
-    }
-    localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
-
-    return localRuntime.Native.Window.values = {
-        dimensions: dimensions,
-        width: width,
-        height: height,
-        resizeIfNeeded: resizeIfNeeded
-    };
-
 };
 
 Elm.Result = Elm.Result || {};
@@ -5385,72 +4556,6 @@ Elm.Text.make = function (_elm) {
                       ,asText: asText};
    return _elm.Text.values;
 };
-Elm.Transform2D = Elm.Transform2D || {};
-Elm.Transform2D.make = function (_elm) {
-   "use strict";
-   _elm.Transform2D = _elm.Transform2D || {};
-   if (_elm.Transform2D.values)
-   return _elm.Transform2D.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "Transform2D",
-   $Native$Transform2D = Elm.Native.Transform2D.make(_elm);
-   var multiply = $Native$Transform2D.multiply;
-   var rotation = $Native$Transform2D.rotation;
-   var matrix = $Native$Transform2D.matrix;
-   var translation = F2(function (x,
-   y) {
-      return A6(matrix,
-      1,
-      0,
-      0,
-      1,
-      x,
-      y);
-   });
-   var scale = function (s) {
-      return A6(matrix,
-      s,
-      0,
-      0,
-      s,
-      0,
-      0);
-   };
-   var scaleX = function (x) {
-      return A6(matrix,
-      x,
-      0,
-      0,
-      1,
-      0,
-      0);
-   };
-   var scaleY = function (y) {
-      return A6(matrix,
-      1,
-      0,
-      0,
-      y,
-      0,
-      0);
-   };
-   var identity = $Native$Transform2D.identity;
-   var Transform2D = {ctor: "Transform2D"};
-   _elm.Transform2D.values = {_op: _op
-                             ,identity: identity
-                             ,matrix: matrix
-                             ,multiply: multiply
-                             ,rotation: rotation
-                             ,translation: translation
-                             ,scale: scale
-                             ,scaleX: scaleX
-                             ,scaleY: scaleY};
-   return _elm.Transform2D.values;
-};
 Elm.WhereBrain = Elm.WhereBrain || {};
 Elm.WhereBrain.make = function (_elm) {
    "use strict";
@@ -5464,169 +4569,20 @@ Elm.WhereBrain.make = function (_elm) {
    _P = _N.Ports.make(_elm),
    $moduleName = "WhereBrain",
    $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Compass = Elm.Compass.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Text = Elm.Text.make(_elm),
-   $Window = Elm.Window.make(_elm);
-   var iuStyle = F2(function (s,
-   t) {
-      return $Text.centered($Text.style(s)($Text.fromString(t)));
-   });
-   var bigFont = {_: {}
-                 ,bold: false
-                 ,color: $Color.white
-                 ,height: $Maybe.Just(72)
-                 ,italic: false
-                 ,line: $Maybe.Nothing
-                 ,typeface: _L.fromArray(["BentonSansBold"
-                                         ,"sans"])};
-   var medFont = _U.replace([["typeface"
-                             ,_L.fromArray(["BentonSansRegular"
-                                           ,"sans"])]
-                            ,["height",$Maybe.Just(36)]],
-   bigFont);
-   var smFont = _U.replace([["height"
-                            ,$Maybe.Just(16)]],
-   medFont);
-   var smFont$ = _U.replace([["typeface"
-                             ,_L.fromArray(["BentonSansBold"
-                                           ,"sans"])]],
-   smFont);
-   var distMessage = function (d) {
+   $Text = Elm.Text.make(_elm);
+   var scene = function (g) {
       return function () {
-         var kilo = function (x) {
-            return x / 1000;
-         };
-         var mile = function (x) {
-            return x * 0.62137 / 1000;
-         };
-         var foot = function (x) {
-            return x * 3.281;
-         };
-         var inch = function (x) {
-            return 12 * foot(x);
-         };
-         var $ = _U.cmp(d,
-         100) < 0 ? {ctor: "_Tuple2"
-                    ,_0: inch(d)
-                    ,_1: "INCHES"} : _U.cmp(d,
-         1000) < 0 ? {ctor: "_Tuple2"
-                     ,_0: foot(d)
-                     ,_1: "FEET"} : _U.cmp(d,
-         10000) < 0 ? {ctor: "_Tuple2"
-                      ,_0: mile(d)
-                      ,_1: "MILES"} : {ctor: "_Tuple2"
-                                      ,_0: kilo(d)
-                                      ,_1: "KILOMETERS"},
-         n = $._0,
-         c = $._1;
-         var en = iuStyle(bigFont)($Basics.toString($Basics.floor(n)));
-         var ec = A2(iuStyle,medFont,c);
-         var wTot = $List.maximum(A2($List.map,
-         $Graphics$Element.widthOf,
-         _L.fromArray([en,ec])));
-         var elms = A2($List.map,
-         $Graphics$Element.width(wTot),
-         _L.fromArray([en,ec]));
+         var vals = _L.fromArray([$Text.asText($Compass.convert(g))
+                                 ,$Text.asText($Compass.update(g))
+                                 ,$Text.asText(g)]);
          return A2($Graphics$Element.flow,
          $Graphics$Element.down,
-         elms);
+         vals);
       }();
    };
-   var bg = {_: {}
-            ,direction: 361.0
-            ,distance: -1.0};
-   var bfrGeo = function (g) {
-      return function () {
-         var lon = $Basics.degrees(g.lon);
-         var lat = $Basics.degrees(g.lat);
-         var brainLon = $Basics.degrees(-86.520674);
-         var dLon = $Basics.abs(lon - brainLon);
-         var brainLat = $Basics.degrees(39.171989);
-         var dir = A2($Basics.atan2,
-         $Basics.sin(dLon) * $Basics.cos(brainLat),
-         $Basics.cos(lat) * $Basics.sin(brainLat) - $Basics.sin(lat) * $Basics.cos(brainLat) * $Basics.cos(dLon));
-         var googEarthRadius = 6378137.0;
-         var dist = googEarthRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
-         return _U.replace([["distance"
-                            ,dist]
-                           ,["direction",dir]],
-         bg);
-      }();
-   };
-   var scene = F2(function (_v0,
-   g) {
-      return function () {
-         switch (_v0.ctor)
-         {case "_Tuple2":
-            return function () {
-                 var thik = 3;
-                 var sLine = _U.replace([["width"
-                                         ,thik]
-                                        ,["color",$Color.white]],
-                 $Graphics$Collage.defaultLine);
-                 var hpng = $Basics.toFloat(_v0._1) / 6;
-                 var hpng$ = $Basics.floor(hpng);
-                 var png = A2($Graphics$Element.flow,
-                 $Graphics$Element.down,
-                 _L.fromArray([A3($Graphics$Element.fittedImage,
-                              hpng$,
-                              hpng$,
-                              "assets/flatbrain_white.png")
-                              ,$Graphics$Element.width(hpng$)(A2(iuStyle,
-                              smFont,
-                              "WHERE IS"))
-                              ,$Graphics$Element.width(hpng$)(A2(iuStyle,
-                              smFont$,
-                              "#IUBRAIN?"))]));
-                 var lower = $Graphics$Collage.moveY($Basics.negate(hpng) * 0.75);
-                 var gDir = function (_) {
-                    return _.direction;
-                 }(bfrGeo(g));
-                 var eWords = distMessage(function (_) {
-                    return _.distance;
-                 }(bfrGeo(g)));
-                 var fitRad = $Basics.sqrt($List.sum(A2($List.map,
-                 function (n) {
-                    return $Basics.toFloat(n * n);
-                 },
-                 _L.fromArray([$Graphics$Element.widthOf(eWords)
-                              ,$Graphics$Element.heightOf(eWords)]))));
-                 var pngOff = ($Basics.toFloat(_v0._1) - fitRad) / 2;
-                 return $Graphics$Element.color(A3($Color.rgb,
-                 221,
-                 30,
-                 52))(A3($Graphics$Element.container,
-                 _v0._0,
-                 _v0._1,
-                 $Graphics$Element.middle)(A3($Graphics$Collage.collage,
-                 _v0._0,
-                 _v0._1,
-                 _L.fromArray([$Graphics$Collage.moveY(pngOff)($Graphics$Collage.toForm(png))
-                              ,lower($Graphics$Collage.traced(sLine)(A2($Graphics$Collage.segment,
-                              $Basics.fromPolar({ctor: "_Tuple2"
-                                                ,_0: fitRad * 0.9
-                                                ,_1: gDir}),
-                              $Basics.fromPolar({ctor: "_Tuple2"
-                                                ,_0: fitRad * 1.1
-                                                ,_1: gDir}))))
-                              ,lower($Graphics$Collage.outlined(sLine)($Graphics$Collage.circle(fitRad)))
-                              ,lower($Graphics$Collage.toForm(eWords))]))));
-              }();}
-         _U.badCase($moduleName,
-         "between lines 75 and 96");
-      }();
-   });
-   var BrainGeo = F2(function (a,
-   b) {
-      return {_: {}
-             ,direction: b
-             ,distance: a};
-   });
    var geo = _P.portIn("geo",
    _P.incomingSignal(function (v) {
       return typeof v === "object" && "lat" in v && "lon" in v && "hdg" in v ? {_: {}
@@ -5638,54 +4594,11 @@ Elm.WhereBrain.make = function (_elm) {
                                                                                v.hdg)} : _U.badPort("an object with fields \'lat\', \'lon\', \'hdg\'",
       v);
    }));
-   var main = A2($Signal._op["~"],
-   A2($Signal._op["<~"],
+   var main = A2($Signal._op["<~"],
    scene,
-   $Window.dimensions),
    geo);
-   var RawGeo = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,hdg: c
-             ,lat: a
-             ,lon: b};
-   });
    _elm.WhereBrain.values = {_op: _op
-                            ,RawGeo: RawGeo
-                            ,BrainGeo: BrainGeo
-                            ,bg: bg
-                            ,bfrGeo: bfrGeo
-                            ,bigFont: bigFont
-                            ,medFont: medFont
-                            ,smFont: smFont
-                            ,smFont$: smFont$
-                            ,iuStyle: iuStyle
-                            ,distMessage: distMessage
                             ,scene: scene
                             ,main: main};
    return _elm.WhereBrain.values;
-};
-Elm.Window = Elm.Window || {};
-Elm.Window.make = function (_elm) {
-   "use strict";
-   _elm.Window = _elm.Window || {};
-   if (_elm.Window.values)
-   return _elm.Window.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "Window",
-   $Native$Window = Elm.Native.Window.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var height = $Native$Window.height;
-   var width = $Native$Window.width;
-   var dimensions = $Native$Window.dimensions;
-   _elm.Window.values = {_op: _op
-                        ,dimensions: dimensions
-                        ,width: width
-                        ,height: height};
-   return _elm.Window.values;
 };
