@@ -4,8 +4,10 @@ const defaultLat = 91.0,
       defaultHdg = 361.0;
 var g = Elm.fullscreen(Elm.WhereBrain, {geo:{lat:defaultLat,lon:defaultLon,hdg:defaultHdg}});
 
+
 // actually get the values
 navigator.geolocation.watchPosition(geoSuccess,geoError,geoOpts);
+
 
 // callbacks and options
 function geoSuccess(p) {
@@ -18,8 +20,9 @@ function geoSuccess(p) {
 function geoError(e) {
     console.log ('Geolocation error: ' + e.code + ' ( ' + e.message + ' ) ');
 }
-var geoOpts = {
-    enableHighAccuracy: true,
-    maximumAge: 30000,
-    timeout: 27000
-};
+// disabling these for now; more testing required
+// var geoOpts = {
+//     enableHighAccuracy: true,
+//     maximumAge: 30000,
+//     timeout: 27000
+// };
