@@ -93,7 +93,7 @@ scene (w,h) g =
             , segment (fromPolar(fitRad * 0.9, gDir)) (fromPolar(fitRad * 1.1, gDir)) |> traced sLine |> lower
             , circle fitRad |> outlined sLine |> lower
             , toForm eWords |> lower
-            ] |> container w h middle |> color darkRed
+            ] |> container w h middle |> color (rgb 221 30 52)
 
 -- RENDER
 main = scene <~ Window.dimensions ~ geo

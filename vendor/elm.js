@@ -5597,7 +5597,10 @@ Elm.WhereBrain.make = function (_elm) {
                  _L.fromArray([$Graphics$Element.widthOf(eWords)
                               ,$Graphics$Element.heightOf(eWords)]))));
                  var pngOff = ($Basics.toFloat(_v0._1) - fitRad) / 2;
-                 return $Graphics$Element.color($Color.darkRed)(A3($Graphics$Element.container,
+                 return $Graphics$Element.color(A3($Color.rgb,
+                 221,
+                 30,
+                 52))(A3($Graphics$Element.container,
                  _v0._0,
                  _v0._1,
                  $Graphics$Element.middle)(A3($Graphics$Collage.collage,
