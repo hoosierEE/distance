@@ -1,3 +1,7 @@
+body {
+    margin: auto;
+}
+
 @font-face {
     font-family: 'BentonSansBold';
     src: url('https://fonts.iu.edu/fonts/benton-sans-bold.eot');

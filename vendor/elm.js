@@ -5467,6 +5467,7 @@ Elm.WhereBrain.make = function (_elm) {
    $Color = Elm.Color.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
@@ -5488,6 +5489,13 @@ Elm.WhereBrain.make = function (_elm) {
                                            ,"sans"])]
                             ,["height",$Maybe.Just(36)]],
    bigFont);
+   var smFont = _U.replace([["height"
+                            ,$Maybe.Just(16)]],
+   medFont);
+   var smFont$ = _U.replace([["typeface"
+                             ,_L.fromArray(["BentonSansBold"
+                                           ,"sans"])]],
+   smFont);
    var distMessage = function (d) {
       return function () {
          var kilo = function (x) {
@@ -5517,18 +5525,18 @@ Elm.WhereBrain.make = function (_elm) {
          n = $._0,
          c = $._1;
          var en = iuStyle(bigFont)($Basics.toString($Basics.floor(n)));
-         var ec = $Graphics$Element.width($Graphics$Element.widthOf(en))(A2(iuStyle,
-         medFont,
-         c));
+         var ec = A2(iuStyle,medFont,c);
+         var wTot = $List.maximum(A2($List.map,
+         $Graphics$Element.widthOf,
+         _L.fromArray([en,ec])));
+         var elms = A2($List.map,
+         $Graphics$Element.width(wTot),
+         _L.fromArray([en,ec]));
          return A2($Graphics$Element.flow,
          $Graphics$Element.down,
-         _L.fromArray([en,ec]));
+         elms);
       }();
    };
-   var png = A3($Graphics$Element.fittedImage,
-   100,
-   100,
-   "flatbrain_white.png");
    var bg = {_: {}
             ,direction: 361.0
             ,distance: -1.0};
@@ -5556,42 +5564,58 @@ Elm.WhereBrain.make = function (_elm) {
          switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
-                 var appLineStyle = _U.replace([["width"
-                                                ,10]
-                                               ,["color",$Color.white]],
+                 var thik = 3;
+                 var sLine = _U.replace([["width"
+                                         ,thik]
+                                        ,["color",$Color.white]],
                  $Graphics$Collage.defaultLine);
-                 var wpng = $Basics.toFloat($Graphics$Element.widthOf(png));
+                 var hpng = $Basics.toFloat(_v0._1) / 6;
+                 var hpng$ = $Basics.floor(hpng);
+                 var png = A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([A3($Graphics$Element.fittedImage,
+                              hpng$,
+                              hpng$,
+                              "assets/flatbrain_white.png")
+                              ,$Graphics$Element.width(hpng$)(A2(iuStyle,
+                              smFont,
+                              "WHERE IS"))
+                              ,$Graphics$Element.width(hpng$)(A2(iuStyle,
+                              smFont$,
+                              "#IUBRAIN?"))]));
+                 var lower = $Graphics$Collage.moveY($Basics.negate(hpng) * 0.75);
                  var gDir = function (_) {
                     return _.direction;
                  }(bfrGeo(g));
                  var eWords = distMessage(function (_) {
                     return _.distance;
                  }(bfrGeo(g)));
-                 var words = $Graphics$Collage.toForm(eWords);
-                 var wWords = $Basics.toFloat($Graphics$Element.widthOf(eWords));
-                 var arrowLine = $Graphics$Collage.traced(appLineStyle)(A2($Graphics$Collage.segment,
-                 $Basics.fromPolar({ctor: "_Tuple2"
-                                   ,_0: wWords - 50
-                                   ,_1: gDir}),
-                 $Basics.fromPolar({ctor: "_Tuple2"
-                                   ,_0: wWords + 50
-                                   ,_1: gDir})));
-                 var circ = A2($Graphics$Collage.outlined,
-                 appLineStyle,
-                 $Graphics$Collage.circle(wWords));
-                 return $Graphics$Element.color($Color.red)(A3($Graphics$Element.container,
+                 var fitRad = $Basics.sqrt($List.sum(A2($List.map,
+                 function (n) {
+                    return $Basics.toFloat(n * n);
+                 },
+                 _L.fromArray([$Graphics$Element.widthOf(eWords)
+                              ,$Graphics$Element.heightOf(eWords)]))));
+                 var pngOff = ($Basics.toFloat(_v0._1) - fitRad) / 2;
+                 return $Graphics$Element.color($Color.darkRed)(A3($Graphics$Element.container,
                  _v0._0,
                  _v0._1,
                  $Graphics$Element.middle)(A3($Graphics$Collage.collage,
                  _v0._0,
                  _v0._1,
-                 _L.fromArray([$Graphics$Collage.moveY($Basics.toFloat(_v0._1) / 2 - wpng)($Graphics$Collage.toForm(png))
-                              ,arrowLine
-                              ,circ
-                              ,words]))));
+                 _L.fromArray([$Graphics$Collage.moveY(pngOff)($Graphics$Collage.toForm(png))
+                              ,lower($Graphics$Collage.traced(sLine)(A2($Graphics$Collage.segment,
+                              $Basics.fromPolar({ctor: "_Tuple2"
+                                                ,_0: fitRad * 0.9
+                                                ,_1: gDir}),
+                              $Basics.fromPolar({ctor: "_Tuple2"
+                                                ,_0: fitRad * 1.1
+                                                ,_1: gDir}))))
+                              ,lower($Graphics$Collage.outlined(sLine)($Graphics$Collage.circle(fitRad)))
+                              ,lower($Graphics$Collage.toForm(eWords))]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 70 and 89");
+         "between lines 75 and 96");
       }();
    });
    var BrainGeo = F2(function (a,
@@ -5628,10 +5652,11 @@ Elm.WhereBrain.make = function (_elm) {
                             ,RawGeo: RawGeo
                             ,BrainGeo: BrainGeo
                             ,bg: bg
-                            ,png: png
                             ,bfrGeo: bfrGeo
                             ,bigFont: bigFont
                             ,medFont: medFont
+                            ,smFont: smFont
+                            ,smFont$: smFont$
                             ,iuStyle: iuStyle
                             ,distMessage: distMessage
                             ,scene: scene

@@ -8,13 +8,13 @@ import List
 import Text
 import Window
 
--- geolocation events imported from JavaScript
+-- geolocation events from JavaScript
 type alias RawGeo = { lat:Float,lon:Float,hdg:Float }
 port geo : Signal RawGeo
+-- a more convenient format
 type alias BrainGeo = { distance:Float, direction:Float }
 bg : BrainGeo
 bg = { distance = -1.0, direction = 361.0 }
-png = fittedImage 100 100 "flatbrain_white.png"
 
 -- MATH
 -- convert raw geolocation data into "BrainGeo" data, used by our app
@@ -32,7 +32,7 @@ bfrGeo g =
        { bg | distance <- dist
        , direction <- dir }
 
--- SCENE
+-- FONTS
 bigFont =
     { typeface = [ "BentonSansBold", "sans" ]
     , height   = Just 72
@@ -46,6 +46,9 @@ medFont =
     | typeface <- [ "BentonSansRegular", "sans" ]
     , height   <- Just 36 }
 
+smFont = { medFont | height <- Just 16 }
+smFont' = { smFont | typeface <- ["BentonSansBold", "sans"] }
+
 iuStyle s t = Text.fromString t |> Text.style s |> Text.centered
 
 -- format meters as string
@@ -56,37 +59,41 @@ distMessage d =
         inch x = 12 * foot x -- meters to inches
         kilo x = x / 1000
         en = iuStyle bigFont <| toString <| floor n
-        ec = width (widthOf en) <| iuStyle medFont c
+        ec = iuStyle medFont c
+        wTot = List.maximum <| List.map widthOf [en,ec]
+        elms = List.map (width wTot) [en,ec]
         (n,c) =
             if | d < 100   -> (inch d, "INCHES")
                | d < 1000  -> (foot d, "FEET")
                | d < 10000 -> (mile d, "MILES")
                | otherwise -> (kilo d, "KILOMETERS")
-    in flow down [en, ec]
+    in flow down elms
 
 -- combine background and foreground
 scene : (Int, Int) -> RawGeo -> Element
 scene (w,h) g =
     let
-        eWords    = distMessage (.distance (bfrGeo g))
-        words     = toForm eWords
-        gDir      = bfrGeo g |> .direction
-        wpng      = widthOf png |> toFloat
-        wWords    = toFloat <| widthOf eWords
-
-        appLineStyle = {defaultLine | width <- 10, color <- white }
-        arrowLine = segment (fromPolar(wWords - 50, gDir)) (fromPolar(wWords + 50, gDir)) |> traced appLineStyle
-        circ = outlined appLineStyle (circle wWords)
-
-        -- background = rect (toFloat w) (toFloat h) |> filled red
+        eWords = distMessage <| .distance <| bfrGeo g
+        gDir   = .direction <| bfrGeo g
+        hpng   = toFloat h / 6
+        hpng'  = floor hpng
+        pngOff = (toFloat h - fitRad) / 2
+        fitRad = sqrt <| List.sum <| List.map (\n -> toFloat <| n*n) [widthOf eWords, heightOf eWords]
+        thik   = 3
+        png    = flow down
+                    [ fittedImage hpng' hpng' "assets/flatbrain_white.png"
+                    , width hpng' <| iuStyle smFont "WHERE IS"
+                    , width hpng' <| iuStyle smFont' "#IUBRAIN?"
+                    ]
+        sLine  = {defaultLine | width <- thik, color <- white }
+        lower  = moveY (negate hpng * 0.75)
     in
-       color red <| container w h middle <|
-           collage w h
-           [ png |> toForm |> moveY (toFloat h / 2 - wpng)
-           , arrowLine
-           , circ
-           , words
-           ]
+        collage w h
+            [ png |> toForm |> moveY pngOff
+            , segment (fromPolar(fitRad * 0.9, gDir)) (fromPolar(fitRad * 1.1, gDir)) |> traced sLine |> lower
+            , circle fitRad |> outlined sLine |> lower
+            , toForm eWords |> lower
+            ] |> container w h middle |> color darkRed
 
 -- RENDER
 main = scene <~ Window.dimensions ~ geo
