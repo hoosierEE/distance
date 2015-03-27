@@ -652,85 +652,53 @@ Elm.Compass.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
-   $Graphics$Element = Elm.Graphics.Element.make(_elm),
-   $List = Elm.List.make(_elm);
-   var logo = function (h) {
-      return function () {
-         var x = h / 5 | 0;
-         var png = A3($Graphics$Element.fittedImage,
-         x,
-         x,
-         "assets/flatbrain_white.png");
-         return A4($Graphics$Element.container,
-         x,
-         x,
-         $Graphics$Element.middle,
-         png);
-      }();
-   };
-   var circlePlot = F2(function (h,
-   t) {
-      return function () {
-         var rad = $Basics.toFloat(h) / 4;
-         var side = $Basics.floor(rad) * 2;
-         var $ = $Basics.fromPolar({ctor: "_Tuple2"
-                                   ,_0: rad - 20
-                                   ,_1: t}),
-         x1 = $._0,
-         y1 = $._1;
-         var $ = $Basics.fromPolar({ctor: "_Tuple2"
-                                   ,_0: rad
-                                   ,_1: t}),
-         x2 = $._0,
-         y2 = $._1;
-         var pth = A2($Graphics$Collage.segment,
-         {ctor: "_Tuple2",_0: x1,_1: y1},
-         {ctor: "_Tuple2"
-         ,_0: x2
-         ,_1: y2});
-         var ln = $Graphics$Collage.defaultLine;
-         var myLine = _U.replace([["width"
-                                  ,3]
-                                 ,["color",$Color.white]],
-         ln);
-         return A3($Graphics$Collage.collage,
-         side,
-         side,
-         _L.fromArray([A2($Graphics$Collage.traced,
-                      myLine,
-                      pth)
-                      ,$Graphics$Collage.outlined(myLine)($Graphics$Collage.circle(rad - 10))]));
-      }();
-   });
+   $Graphics$Element = Elm.Graphics.Element.make(_elm);
    var rose = F2(function (_v0,m) {
       return function () {
          switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
-                 var c = A2(circlePlot,
-                 _v0._1,
-                 m.angle);
-                 var wc = $Graphics$Element.widthOf(c);
-                 var side = _v0._1 / 4 | 0;
+                 var rad = $Basics.toFloat(_v0._1) / 4;
+                 var side = $Basics.floor(rad) * 2;
+                 var $ = $Basics.fromPolar({ctor: "_Tuple2"
+                                           ,_0: rad - 20
+                                           ,_1: m.angle}),
+                 x1 = $._0,
+                 y1 = $._1;
+                 var $ = $Basics.fromPolar({ctor: "_Tuple2"
+                                           ,_0: rad
+                                           ,_1: m.angle}),
+                 x2 = $._0,
+                 y2 = $._1;
+                 var pth = A2($Graphics$Collage.segment,
+                 {ctor: "_Tuple2",_0: x1,_1: y1},
+                 {ctor: "_Tuple2"
+                 ,_0: x2
+                 ,_1: y2});
                  var passion = A3($Color.rgb,
                  221,
                  30,
                  52);
                  var ln = $Graphics$Collage.defaultLine;
+                 var myLine = _U.replace([["width"
+                                          ,3]
+                                         ,["color",$Color.white]],
+                 ln);
                  return $Graphics$Element.color(passion)(A3($Graphics$Element.container,
                  _v0._0,
                  _v0._1,
-                 $Graphics$Element.middle)($Graphics$Element.flow($Graphics$Element.down)(A2($List.map,
-                 function (n) {
-                    return A2($Graphics$Element.width,
-                    wc,
-                    n);
-                 },
-                 _L.fromArray([logo(_v0._1)
-                              ,c])))));
+                 $Graphics$Element.middle)(A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([A3($Graphics$Collage.collage,
+                 side,
+                 side,
+                 _L.fromArray([A2($Graphics$Collage.traced,
+                              myLine,
+                              pth)
+                              ,$Graphics$Collage.outlined(myLine)($Graphics$Collage.circle(rad - 10))]))]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 70 and 80");
+         "between lines 48 and 64");
       }();
    });
    var simplify = function (_v4) {
@@ -761,7 +729,7 @@ Elm.Compass.make = function (_elm) {
                                             ,_2: "MILES"};
               }();}
          _U.badCase($moduleName,
-         "between lines 31 and 37");
+         "between lines 30 and 36");
       }();
    };
    var convert = function (rg) {
@@ -793,7 +761,7 @@ Elm.Compass.make = function (_elm) {
                                        ,dist: _v8._1
                                        ,units: _v8._2};}
                _U.badCase($moduleName,
-               "on line 42, column 29 to 53");
+               "on line 41, column 29 to 53");
             }();
          };
          return toModel(simplify(convert(g)));
@@ -4882,69 +4850,6 @@ Elm.Native.Utils.make = function(localRuntime) {
     };
 };
 
-Elm.Native = Elm.Native || {};
-Elm.Native.Window = {};
-Elm.Native.Window.make = function(localRuntime) {
-
-    localRuntime.Native = localRuntime.Native || {};
-    localRuntime.Native.Window = localRuntime.Native.Window || {};
-    if (localRuntime.Native.Window.values) {
-        return localRuntime.Native.Window.values;
-    }
-
-    var Signal = Elm.Signal.make(localRuntime);
-    var NS = Elm.Native.Signal.make(localRuntime);
-    var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
-
-    function getWidth() {
-        return localRuntime.node.clientWidth;
-    }
-    function getHeight() {
-        if (localRuntime.isFullscreen()) {
-            return window.innerHeight;
-        }
-        return localRuntime.node.clientHeight;
-    }
-
-    var dimensions = NS.input(Tuple2(getWidth(), getHeight()));
-    dimensions.defaultNumberOfKids = 2;
-
-    // Do not move width and height into Elm. By setting the default number of kids,
-    // the resize listener can be detached.
-    var width  = A2(Signal.map, function(p){return p._0;}, dimensions);
-    width.defaultNumberOfKids = 0;
-
-    var height = A2(Signal.map, function(p){return p._1;}, dimensions);
-    height.defaultNumberOfKids = 0;
-
-    function resizeIfNeeded() {
-        // Do not trigger event if the dimensions have not changed.
-        // This should be most of the time.
-        var w = getWidth();
-        var h = getHeight();
-        if (dimensions.value._0 === w && dimensions.value._1 === h) return;
-
-        setTimeout(function () {
-            // Check again to see if the dimensions have changed.
-            // It is conceivable that the dimensions have changed
-            // again while some other event was being processed.
-            var w = getWidth();
-            var h = getHeight();
-            if (dimensions.value._0 === w && dimensions.value._1 === h) return;
-            localRuntime.notify(dimensions.id, Tuple2(w,h));
-        }, 0);
-    }
-    localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
-
-    return localRuntime.Native.Window.values = {
-        dimensions: dimensions,
-        width: width,
-        height: height,
-        resizeIfNeeded: resizeIfNeeded
-    };
-
-};
-
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
@@ -5355,64 +5260,4 @@ Elm.Transform2D.make = function (_elm) {
                              ,scaleX: scaleX
                              ,scaleY: scaleY};
    return _elm.Transform2D.values;
-};
-Elm.WhereBrain = Elm.WhereBrain || {};
-Elm.WhereBrain.make = function (_elm) {
-   "use strict";
-   _elm.WhereBrain = _elm.WhereBrain || {};
-   if (_elm.WhereBrain.values)
-   return _elm.WhereBrain.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "WhereBrain",
-   $Compass = Elm.Compass.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Window = Elm.Window.make(_elm);
-   var geo = _P.portIn("geo",
-   _P.incomingSignal(function (v) {
-      return typeof v === "object" && "lat" in v && "lon" in v && "hdg" in v ? {_: {}
-                                                                               ,lat: typeof v.lat === "number" ? v.lat : _U.badPort("a number",
-                                                                               v.lat)
-                                                                               ,lon: typeof v.lon === "number" ? v.lon : _U.badPort("a number",
-                                                                               v.lon)
-                                                                               ,hdg: typeof v.hdg === "number" ? v.hdg : _U.badPort("a number",
-                                                                               v.hdg)} : _U.badPort("an object with fields \'lat\', \'lon\', \'hdg\'",
-      v);
-   }));
-   var main = A2($Signal._op["~"],
-   A2($Signal._op["<~"],
-   $Compass.rose,
-   $Window.dimensions),
-   A2($Signal._op["<~"],
-   $Compass.fromRaw,
-   geo));
-   _elm.WhereBrain.values = {_op: _op
-                            ,main: main};
-   return _elm.WhereBrain.values;
-};
-Elm.Window = Elm.Window || {};
-Elm.Window.make = function (_elm) {
-   "use strict";
-   _elm.Window = _elm.Window || {};
-   if (_elm.Window.values)
-   return _elm.Window.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "Window",
-   $Native$Window = Elm.Native.Window.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var height = $Native$Window.height;
-   var width = $Native$Window.width;
-   var dimensions = $Native$Window.dimensions;
-   _elm.Window.values = {_op: _op
-                        ,dimensions: dimensions
-                        ,width: width
-                        ,height: height};
-   return _elm.Window.values;
 };
