@@ -3,6 +3,7 @@ import Graphics.Collage as GC
 import Graphics.Element as GE
 import Color as C
 import List
+import Text as T
 
 -- MODEL
 type alias RawGeo = { lat:Float,lon:Float,hdg:Float }
@@ -37,18 +38,20 @@ simplify (d,o) =
           | otherwise -> (o, mile d, "MILES")
 
 
+-- entry port
 fromRaw : RawGeo -> Model
 fromRaw g =
     let toModel (f,i,s) = { angle=f, dist=i, units=s }
     in toModel <| simplify <| convert g
 
 
+-- VIEW
 circlePlot : Int -> Float -> GE.Element
 circlePlot h t =
     let ln = GC.defaultLine
         myLine = { ln | width <- 3, color <- C.white }
-        rad = toFloat h / 4
-        side = floor rad * 2
+        rad = toFloat h / 5
+        side = h // 2
         (x1,y1) = fromPolar (rad-20,t)
         (x2,y2) = fromPolar (rad,t)
         pth = GC.segment (x1,y1) (x2,y2)
@@ -62,15 +65,15 @@ logo : Int -> GE.Element
 logo h =
     let x = h // 5
         png = GE.fittedImage x x "assets/flatbrain_white.png"
-    in GE.container x x GE.middle png
+        cap1 = T.plainText "WHERE IS"
+    in GE.container x x GE.midTop <| GE.flow GE.down [png,cap1]
 
 
--- VIEW
 rose : (Int,Int) -> Model -> GE.Element
 rose (w,h) m =
     let ln = GC.defaultLine
         passion = C.rgb 221 30 52
-        side = h // 4
+        side = h // 5
         c = circlePlot h m.angle
         widest = GE.widthOf c
     in
