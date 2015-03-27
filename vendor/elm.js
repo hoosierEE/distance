@@ -653,42 +653,57 @@ Elm.Compass.make = function (_elm) {
    $Color = Elm.Color.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm);
-   var rose = F2(function (h,m) {
-      return function () {
-         var h$ = $Basics.toFloat(h) / 3;
-         var $ = $Basics.fromPolar({ctor: "_Tuple2"
-                                   ,_0: h$ - 20
-                                   ,_1: m.angle}),
-         x1 = $._0,
-         y1 = $._1;
-         var $ = $Basics.fromPolar({ctor: "_Tuple2"
-                                   ,_0: h$
-                                   ,_1: m.angle}),
-         x2 = $._0,
-         y2 = $._1;
-         var pth = A2($Graphics$Collage.segment,
-         {ctor: "_Tuple2",_0: x1,_1: y1},
-         {ctor: "_Tuple2"
-         ,_0: x2
-         ,_1: y2});
-         var ln = $Graphics$Collage.defaultLine;
-         var myLine = _U.replace([["width"
-                                  ,3]
-                                 ,["color",$Color.red]],
-         ln);
-         var bar = A2($Graphics$Collage.traced,
-         myLine,
-         pth);
-         var bg = $Graphics$Collage.outlined(myLine)($Graphics$Collage.circle(h$ - 10));
-         return A3($Graphics$Collage.collage,
-         h,
-         h,
-         _L.fromArray([bg,bar]));
-      }();
-   });
-   var simplify = function (_v0) {
+   var rose = F2(function (_v0,m) {
       return function () {
          switch (_v0.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var rad = $Basics.toFloat(_v0._1) / 4;
+                 var side = $Basics.floor(rad) * 2;
+                 var $ = $Basics.fromPolar({ctor: "_Tuple2"
+                                           ,_0: rad - 20
+                                           ,_1: m.angle}),
+                 x1 = $._0,
+                 y1 = $._1;
+                 var $ = $Basics.fromPolar({ctor: "_Tuple2"
+                                           ,_0: rad
+                                           ,_1: m.angle}),
+                 x2 = $._0,
+                 y2 = $._1;
+                 var pth = A2($Graphics$Collage.segment,
+                 {ctor: "_Tuple2",_0: x1,_1: y1},
+                 {ctor: "_Tuple2"
+                 ,_0: x2
+                 ,_1: y2});
+                 var passion = A3($Color.rgb,
+                 221,
+                 30,
+                 52);
+                 var ln = $Graphics$Collage.defaultLine;
+                 var myLine = _U.replace([["width"
+                                          ,3]
+                                         ,["color",$Color.white]],
+                 ln);
+                 return $Graphics$Element.color(passion)(A3($Graphics$Element.container,
+                 _v0._0,
+                 _v0._1,
+                 $Graphics$Element.middle)(A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([A3($Graphics$Collage.collage,
+                 side,
+                 side,
+                 _L.fromArray([A2($Graphics$Collage.traced,
+                              myLine,
+                              pth)
+                              ,$Graphics$Collage.outlined(myLine)($Graphics$Collage.circle(rad - 10))]))]))));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 48 and 64");
+      }();
+   });
+   var simplify = function (_v4) {
+      return function () {
+         switch (_v4.ctor)
          {case "_Tuple2":
             return function () {
                  var mile = function (m) {
@@ -700,17 +715,17 @@ Elm.Compass.make = function (_elm) {
                  var inch = function (m) {
                     return foot(m) * 12;
                  };
-                 return _U.cmp(_v0._0,
+                 return _U.cmp(_v4._0,
                  50) < 0 ? {ctor: "_Tuple3"
-                           ,_0: _v0._1
-                           ,_1: inch(_v0._0)
-                           ,_2: "INCHES"} : _U.cmp(_v0._0,
+                           ,_0: _v4._1
+                           ,_1: inch(_v4._0)
+                           ,_2: "INCHES"} : _U.cmp(_v4._0,
                  1000) < 0 ? {ctor: "_Tuple3"
-                             ,_0: _v0._1
-                             ,_1: foot(_v0._0)
+                             ,_0: _v4._1
+                             ,_1: foot(_v4._0)
                              ,_2: "FEET"} : {ctor: "_Tuple3"
-                                            ,_0: _v0._1
-                                            ,_1: mile(_v0._0)
+                                            ,_0: _v4._1
+                                            ,_1: mile(_v4._0)
                                             ,_2: "MILES"};
               }();}
          _U.badCase($moduleName,
@@ -738,13 +753,13 @@ Elm.Compass.make = function (_elm) {
    };
    var fromRaw = function (g) {
       return function () {
-         var toModel = function (_v4) {
+         var toModel = function (_v8) {
             return function () {
-               switch (_v4.ctor)
+               switch (_v8.ctor)
                {case "_Tuple3": return {_: {}
-                                       ,angle: _v4._0
-                                       ,dist: _v4._1
-                                       ,units: _v4._2};}
+                                       ,angle: _v8._0
+                                       ,dist: _v8._1
+                                       ,units: _v8._2};}
                _U.badCase($moduleName,
                "on line 41, column 29 to 53");
             }();
@@ -5338,7 +5353,7 @@ Elm.WhereBrain.make = function (_elm) {
    var main = A2($Signal._op["~"],
    A2($Signal._op["<~"],
    $Compass.rose,
-   $Window.height),
+   $Window.dimensions),
    A2($Signal._op["<~"],
    $Compass.fromRaw,
    geo));

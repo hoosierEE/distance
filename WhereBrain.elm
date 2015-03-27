@@ -7,5 +7,5 @@ import Window
 -- geolocation events from JavaScript
 port geo : Signal Compass.RawGeo
 
-main = Compass.rose <~ Window.height ~ (Compass.fromRaw <~ geo)
+main = Compass.rose <~ Window.dimensions ~ (Compass.fromRaw <~ geo)
 

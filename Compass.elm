@@ -1,6 +1,6 @@
 module Compass (fromRaw,rose,RawGeo,Model) where
 import Graphics.Collage as GC
-import Graphics.Element as G
+import Graphics.Element as GE
 import Color as C
 
 -- MODEL
@@ -43,17 +43,22 @@ fromRaw g =
 
 
 -- VIEW
-rose : Int -> Model -> G.Element
-rose h m =
+rose : (Int,Int) -> Model -> GE.Element
+rose (w,h) m =
     let ln = GC.defaultLine
-        myLine = { ln | width <- 3, color <- C.red }
-        h' = toFloat h / 3
-        (x1,y1) = fromPolar (h'-20,m.angle)
-        (x2,y2) = fromPolar (h',m.angle)
+        passion = C.rgb 221 30 52
+        myLine = { ln | width <- 3, color <- C.white }
+        rad = toFloat h / 4
+        side = floor rad * 2
+        (x1,y1) = fromPolar (rad-20,m.angle)
+        (x2,y2) = fromPolar (rad,m.angle)
         pth = GC.segment (x1,y1) (x2,y2)
-        bar = GC.traced myLine pth
-        bg = GC.outlined myLine <| GC.circle (h'-10)
-    in GC.collage h h
-       [ bg
-       , bar
+    in
+       GE.color passion <| GE.container w h GE.middle <|
+       GE.flow GE.down
+       [
+           GC.collage side side
+           [ GC.traced myLine pth
+           , GC.outlined myLine <| GC.circle (rad-10)
+           ]
        ]
