@@ -1,6 +1,9 @@
-module Compass (convert,update,RawGeo,Model) where
+module Compass (fromRaw,rose,RawGeo,Model) where
+import Graphics.Collage as GC
+import Graphics.Element as G
+import Color as C
 
--- only records, no view
+-- MODEL
 type alias RawGeo = { lat:Float,lon:Float,hdg:Float }
 type alias Model = { angle:Float, dist:Int, units:String }
 
@@ -33,8 +36,24 @@ simplify (d,o) =
           | otherwise -> (o, mile d, "MILES")
 
 
-toModel : (Float,Int,String) -> Model
-toModel (f,i,s) = { angle=f, dist=i, units=s }
+fromRaw : RawGeo -> Model
+fromRaw g =
+    let toModel (f,i,s) = { angle=f, dist=i, units=s }
+    in toModel <| simplify <| convert g
 
-update : RawGeo -> Model
-update g = toModel <| simplify <| convert g
+
+-- VIEW
+rose : Int -> Model -> G.Element
+rose h m =
+    let ln = GC.defaultLine
+        myLine = { ln | width <- 3, color <- C.red }
+        h' = toFloat h / 3
+        (x1,y1) = fromPolar (h'-20,m.angle)
+        (x2,y2) = fromPolar (h',m.angle)
+        pth = GC.segment (x1,y1) (x2,y2)
+        bar = GC.traced myLine pth
+        bg = GC.outlined myLine <| GC.circle (h'-10)
+    in GC.collage h h
+       [ bg
+       , bar
+       ]
