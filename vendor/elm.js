@@ -674,7 +674,6 @@ Elm.Compass.make = function (_elm) {
    var circlePlot = F2(function (h,
    t) {
       return function () {
-         var side = h / 2 | 0;
          var rad = $Basics.toFloat(h) / 5;
          var $ = $Basics.fromPolar({ctor: "_Tuple2"
                                    ,_0: rad - 20
@@ -697,48 +696,17 @@ Elm.Compass.make = function (_elm) {
                                  ,["color",$Color.white]],
          ln);
          return A3($Graphics$Collage.collage,
-         side,
-         side,
+         h,
+         h,
          _L.fromArray([A2($Graphics$Collage.traced,
                       myLine,
                       pth)
                       ,$Graphics$Collage.outlined(myLine)($Graphics$Collage.circle(rad - 10))]));
       }();
    });
-   var rose = F2(function (_v0,m) {
+   var modelize = function (_v0) {
       return function () {
          switch (_v0.ctor)
-         {case "_Tuple2":
-            return function () {
-                 var c = A2(circlePlot,
-                 _v0._1,
-                 m.angle);
-                 var widest = $Graphics$Element.widthOf(c);
-                 var side = _v0._1 / 5 | 0;
-                 var passion = A3($Color.rgb,
-                 221,
-                 30,
-                 52);
-                 var ln = $Graphics$Collage.defaultLine;
-                 return $Graphics$Element.color(passion)(A3($Graphics$Element.container,
-                 _v0._0,
-                 _v0._1,
-                 $Graphics$Element.middle)($Graphics$Element.flow($Graphics$Element.down)(A2($List.map,
-                 function (n) {
-                    return A2($Graphics$Element.width,
-                    widest,
-                    n);
-                 },
-                 _L.fromArray([logo(_v0._1)
-                              ,c])))));
-              }();}
-         _U.badCase($moduleName,
-         "between lines 74 and 83");
-      }();
-   });
-   var simplify = function (_v4) {
-      return function () {
-         switch (_v4.ctor)
          {case "_Tuple2":
             return function () {
                  var mile = function (m) {
@@ -750,24 +718,24 @@ Elm.Compass.make = function (_elm) {
                  var inch = function (m) {
                     return foot(m) * 12;
                  };
-                 return _U.cmp(_v4._0,
-                 50) < 0 ? {ctor: "_Tuple3"
-                           ,_0: _v4._1
-                           ,_1: inch(_v4._0)
-                           ,_2: "INCHES"} : _U.cmp(_v4._0,
-                 1000) < 0 ? {ctor: "_Tuple3"
-                             ,_0: _v4._1
-                             ,_1: foot(_v4._0)
-                             ,_2: "FEET"} : {ctor: "_Tuple3"
-                                            ,_0: _v4._1
-                                            ,_1: mile(_v4._0)
-                                            ,_2: "MILES"};
+                 return _U.cmp(_v0._0,
+                 50) < 0 ? {_: {}
+                           ,angle: _v0._1
+                           ,dist: inch(_v0._0)
+                           ,units: "INCHES"} : _U.cmp(_v0._0,
+                 1000) < 0 ? {_: {}
+                             ,angle: _v0._1
+                             ,dist: foot(_v0._0)
+                             ,units: "FEET"} : {_: {}
+                                               ,angle: _v0._1
+                                               ,dist: mile(_v0._0)
+                                               ,units: "MILES"};
               }();}
          _U.badCase($moduleName,
          "between lines 32 and 38");
       }();
    };
-   var convert = function (rg) {
+   var fromRaw = function (rg) {
       return function () {
          var lon = $Basics.degrees(rg.lon);
          var lat = $Basics.degrees(rg.lat);
@@ -781,27 +749,45 @@ Elm.Compass.make = function (_elm) {
          arg2);
          var googRadius = 6378137.0;
          var dist = googRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
-         return {ctor: "_Tuple2"
-                ,_0: dist
-                ,_1: angl};
+         return modelize({ctor: "_Tuple2"
+                         ,_0: dist
+                         ,_1: angl});
       }();
    };
-   var fromRaw = function (g) {
+   var rose = F2(function (_v4,
+   rg) {
       return function () {
-         var toModel = function (_v8) {
+         switch (_v4.ctor)
+         {case "_Tuple2":
             return function () {
-               switch (_v8.ctor)
-               {case "_Tuple3": return {_: {}
-                                       ,angle: _v8._0
-                                       ,dist: _v8._1
-                                       ,units: _v8._2};}
-               _U.badCase($moduleName,
-               "on line 44, column 29 to 53");
-            }();
-         };
-         return toModel(simplify(convert(g)));
+                 var m = fromRaw(rg);
+                 var c = A2(circlePlot,
+                 _v4._1,
+                 m.angle);
+                 var widest = $Graphics$Element.widthOf(c);
+                 var passion = A3($Color.rgb,
+                 221,
+                 30,
+                 52);
+                 var ln = $Graphics$Collage.defaultLine;
+                 return $Graphics$Element.color(passion)(A3($Graphics$Element.container,
+                 _v4._0,
+                 _v4._1,
+                 $Graphics$Element.middle)($Graphics$Element.flow($Graphics$Element.down)(A2($List.map,
+                 function (n) {
+                    return A2($Graphics$Element.width,
+                    widest,
+                    n);
+                 },
+                 _L.fromArray([logo(_v4._1)
+                              ,A2(circlePlot,
+                              _v4._1,
+                              m.angle)])))));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 67 and 76");
       }();
-   };
+   });
    var Model = F3(function (a,
    b,
    c) {
@@ -810,13 +796,8 @@ Elm.Compass.make = function (_elm) {
              ,dist: b
              ,units: c};
    });
-   var RawGeo = F3(function (a,
-   b,
-   c) {
-      return {_: {}
-             ,hdg: c
-             ,lat: a
-             ,lon: b};
+   var RawGeo = F2(function (a,b) {
+      return {_: {},lat: a,lon: b};
    });
    _elm.Compass.values = {_op: _op
                          ,fromRaw: fromRaw
@@ -5656,22 +5637,18 @@ Elm.WhereBrain.make = function (_elm) {
    $Window = Elm.Window.make(_elm);
    var geo = _P.portIn("geo",
    _P.incomingSignal(function (v) {
-      return typeof v === "object" && "lat" in v && "lon" in v && "hdg" in v ? {_: {}
-                                                                               ,lat: typeof v.lat === "number" ? v.lat : _U.badPort("a number",
-                                                                               v.lat)
-                                                                               ,lon: typeof v.lon === "number" ? v.lon : _U.badPort("a number",
-                                                                               v.lon)
-                                                                               ,hdg: typeof v.hdg === "number" ? v.hdg : _U.badPort("a number",
-                                                                               v.hdg)} : _U.badPort("an object with fields \'lat\', \'lon\', \'hdg\'",
+      return typeof v === "object" && "lat" in v && "lon" in v ? {_: {}
+                                                                 ,lat: typeof v.lat === "number" ? v.lat : _U.badPort("a number",
+                                                                 v.lat)
+                                                                 ,lon: typeof v.lon === "number" ? v.lon : _U.badPort("a number",
+                                                                 v.lon)} : _U.badPort("an object with fields \'lat\', \'lon\'",
       v);
    }));
    var main = A2($Signal._op["~"],
    A2($Signal._op["<~"],
    $Compass.rose,
    $Window.dimensions),
-   A2($Signal._op["<~"],
-   $Compass.fromRaw,
-   geo));
+   geo);
    _elm.WhereBrain.values = {_op: _op
                             ,main: main};
    return _elm.WhereBrain.values;

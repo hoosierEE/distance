@@ -8,6 +8,6 @@ import Window
 port geo : Signal Compass.RawGeo
 
 
-scene : (Int,Int) -> Compass.RawGeo -> Compass.
-main = Compass.rose <~ Window.dimensions ~ (Compass.fromRaw <~ geo)
+-- scene : (Int,Int) -> Compass.RawGeo -> Compass.
+main = Compass.rose <~ Window.dimensions ~ geo
 
