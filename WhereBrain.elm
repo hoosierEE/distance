@@ -1,6 +1,6 @@
 module WhereBrain where
 import Compass
-import Signal (Signal,(<~),(~))
+import Signal exposing (..)
 import Window
 
 

@@ -1,6 +1,6 @@
 module Compass (fromRaw,rose,RawGeo,Model) where
 import Graphics.Collage as GC
-import Graphics.Element (..)
+import Graphics.Element exposing (..)
 import Color as C
 import List
 import Text
@@ -58,7 +58,7 @@ logo : Int -> Element
 logo h =
     let x = h // 5
         png = fittedImage x x "assets/flatbrain_white.png"
-        cap1 = Text.plainText "WHERE IS"
+        cap1 = show "WHERE IS"
     in container x x midTop <| flow down [png,cap1]
 
 
