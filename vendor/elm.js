@@ -2006,7 +2006,6 @@ Elm.Main.make = function (_elm) {
    $Fonts = Elm.Fonts.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
-   $List = Elm.List.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Window = Elm.Window.make(_elm);
    var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
@@ -2030,22 +2029,22 @@ Elm.Main.make = function (_elm) {
                  var cap1 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
                  $Fonts.smFont,
                  "WHERE IS"));
-                 var h$ = _v0._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
+                 var hh = _v0._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
                  var pic = A3($Graphics$Element.container,
                  _v0._0,
-                 h$,
+                 hh,
                  $Graphics$Element.middle)(A3($Graphics$Element.fittedImage,
-                 h$,
-                 h$,
+                 hh,
+                 hh,
                  "assets/flatbrain_white.png"));
-                 var group = $Graphics$Element.flow($Graphics$Element.down)(A2($List.map,
-                 $Graphics$Element.width(_v0._0),
-                 _L.fromArray([pic,cap1,cap2])));
-                 return A4($Graphics$Element.container,
+                 var group = A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([pic,cap1,cap2]));
+                 return $Graphics$Element.link("https://twitter.com/iubrain")(A4($Graphics$Element.container,
                  _v0._0,
                  _v0._1,
                  $Graphics$Element.middle,
-                 group);
+                 group));
               }();}
          _U.badCase($moduleName,
          "between lines 30 and 37");
@@ -2113,7 +2112,7 @@ Elm.Main.make = function (_elm) {
                  $Basics.fromPolar({ctor: "_Tuple2"
                                    ,_0: r * 1.1
                                    ,_1: bg.direction})));
-                 return A4($Graphics$Element.container,
+                 return $Graphics$Element.link("http://psych.indiana.edu/")(A4($Graphics$Element.container,
                  _v4._0,
                  _v4._1,
                  $Graphics$Element.middle,
@@ -2122,7 +2121,7 @@ Elm.Main.make = function (_elm) {
                  _v4._1,
                  _L.fromArray([cir
                               ,lin
-                              ,$Graphics$Collage.toForm(caps)])));
+                              ,$Graphics$Collage.toForm(caps)]))));
               }();}
          _U.badCase($moduleName,
          "between lines 40 and 51");

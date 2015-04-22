@@ -3,7 +3,7 @@ module Main where
 
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
-import Compass exposing (RawGeo, BrainGeo, fromRaw)
+import Compass
 import Fonts exposing (bigFont, medFont, smFont, smBold, iuStyle)
 import Signal exposing ((<~),(~))
 import Color
@@ -12,7 +12,7 @@ import Window
 type alias DistMessage = { dist: Float, msg: String }
 
 -- format meters as string
-distMessage : BrainGeo -> DistMessage
+distMessage : Compass.BrainGeo -> DistMessage
 distMessage geo =
     let
         d = .distance geo
@@ -28,18 +28,18 @@ distMessage geo =
 
 brainBlock (w,h) =
     let
-        h' = h - heightOf cap1 - heightOf cap2
+        hh = h - heightOf cap1 - heightOf cap2
         cap1 = width w <| iuStyle smFont "WHERE IS"
         cap2 = width w <| iuStyle smBold "#IUBRAIN?"
-        pic = container w h' middle <| fittedImage h' h' "assets/flatbrain_white.png"
-        group = flow down <| List.map (width w) [pic, cap1, cap2]
+        pic = container w hh middle <| fittedImage hh hh "assets/flatbrain_white.png"
+        group = flow down [pic, cap1, cap2]
     in
-       container w h middle group
+       container w h middle group |> link "https://twitter.com/iubrain"
 
 compassBlock (w,h) g =
     let
         r = 0.4 * toFloat (if w < h then w else h)
-        bg = fromRaw g
+        bg = Compass.fromRaw g
         dm = distMessage bg
         cap1 = width w <| iuStyle bigFont (toString <| floor dm.dist)
         cap2 = width w <| iuStyle medFont dm.msg
@@ -48,7 +48,7 @@ compassBlock (w,h) g =
         cir = circle r |> outlined sLine
         lin = segment (fromPolar (r * 0.9, bg.direction)) (fromPolar (r * 1.1, bg.direction)) |> traced sLine
     in
-       container w h middle (collage w h [cir,lin,toForm caps])
+       container w h middle (collage w h [cir,lin,toForm caps]) |> link "http://psych.indiana.edu/"
 
 scene (w,h) g =
     let
@@ -61,6 +61,6 @@ scene (w,h) g =
         , compassBlock (w,h2) g
         ] |> width w |> color (Color.rgb 221 30 52)
 
-port geo : Signal RawGeo
+port geo : Signal Compass.RawGeo
 main = scene <~ Window.dimensions ~ geo
 
