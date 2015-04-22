@@ -1,17 +1,20 @@
-module Compass (BrainGeo, RawGeo, bfrGeo) where
-{-| Convert raw geolocation data into something our app can use -}
+module Compass (BrainGeo, RawGeo, fromRaw) where
+{-| Convert raw geolocation data into something our app can use
 
-type alias BrainGeo    = { distance:Float, direction:Float }
-type alias DistMessage = { dist:Int, msg:String }
-type alias RawGeo      = { lat:Float,lon:Float,hdg:Float }
+# Representation
+@docs BrainGeo, RawGeo
 
-bg : BrainGeo
-bg = { distance = -1.0, direction = 0.0 }
+# Conversion
+@docs fromRaw
 
--- MATH
--- convert raw geolocation data into "BrainGeo" data, used by our app
-bfrGeo : RawGeo -> BrainGeo
-bfrGeo g =
+-}
+
+type alias BrainGeo = { distance:Float, direction:Float }
+type alias RawGeo = { lat:Float, lon:Float }
+
+{-| convert raw geolocation data into "BrainGeo" data, used by our app -}
+fromRaw : RawGeo -> BrainGeo
+fromRaw g =
     let googEarthRadius = 6378137 -- meters used by Google Maps
         brainLat = degrees 39.171989
         brainLon = degrees -86.520674
@@ -21,6 +24,6 @@ bfrGeo g =
         dist = googEarthRadius * acos(sin(brainLat) * sin(lat) + cos(brainLat) * cos(lat) * cos(dLon))
         dir = atan2(sin(dLon) * cos(brainLat)) (cos(lat)*sin(brainLat) - sin(lat)*cos(brainLat)*cos(dLon))
     in
-       { bg | distance <- dist
-       , direction <- dir }
+       { distance = dist
+       , direction = dir }
 

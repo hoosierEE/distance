@@ -1,25 +1,21 @@
 // declare a port with default values
-const defaultLat = 91.0,
-      defaultLon = 181.0,
-      defaultHdg = 361.0;
-var g = Elm.fullscreen(Elm.WhereBrain, {geo:{lat:defaultLat,lon:defaultLon,hdg:defaultHdg}});
+const defaultLat = 91.0;
+const defaultLon = 181.0;
+const defaultHdg = 361.0;
+var g = Elm.fullscreen(Elm.Main, {
+    geo: { lat: defaultLat, lon: defaultLon }
+});
 
 // actually get the values
-navigator.geolocation.watchPosition(geoSuccess,geoError,geoOpts);
+navigator.geolocation.watchPosition(geoSuccess,geoError);
 
 // callbacks and options
 function geoSuccess(p) {
-    var la = p.coords.latitude || defaultLat,
-        lo = p.coords.longitude || defaultLon,
-        hd = p.coords.heading || defaultHdg;
+    var la = p.coords.latitude || defaultLat;
+    var lo = p.coords.longitude || defaultLon;
     // send the values to the Elm program
-    g.ports.geo.send({lat:la,lon:lo,hdg:hd});
+    g.ports.geo.send({lat:la,lon:lo});
 }
 function geoError(e) {
     console.log ('Geolocation error: ' + e.code + ' ( ' + e.message + ' ) ');
 }
-var geoOpts = {
-    enableHighAccuracy: true,
-    maximumAge: 30000,
-    timeout: 27000
-};

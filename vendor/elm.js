@@ -628,6 +628,50 @@ Elm.Color.make = function (_elm) {
                        ,darkGray: darkGray};
    return _elm.Color.values;
 };
+Elm.Compass = Elm.Compass || {};
+Elm.Compass.make = function (_elm) {
+   "use strict";
+   _elm.Compass = _elm.Compass || {};
+   if (_elm.Compass.values)
+   return _elm.Compass.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Compass",
+   $Basics = Elm.Basics.make(_elm);
+   var fromRaw = function (g) {
+      return function () {
+         var lon = $Basics.degrees(g.lon);
+         var lat = $Basics.degrees(g.lat);
+         var brainLon = $Basics.degrees(-86.520674);
+         var dLon = $Basics.abs(lon - brainLon);
+         var brainLat = $Basics.degrees(39.171989);
+         var dir = A2($Basics.atan2,
+         $Basics.sin(dLon) * $Basics.cos(brainLat),
+         $Basics.cos(lat) * $Basics.sin(brainLat) - $Basics.sin(lat) * $Basics.cos(brainLat) * $Basics.cos(dLon));
+         var googEarthRadius = 6378137;
+         var dist = googEarthRadius * $Basics.acos($Basics.sin(brainLat) * $Basics.sin(lat) + $Basics.cos(brainLat) * $Basics.cos(lat) * $Basics.cos(dLon));
+         return {_: {}
+                ,direction: dir
+                ,distance: dist};
+      }();
+   };
+   var RawGeo = F2(function (a,b) {
+      return {_: {},lat: a,lon: b};
+   });
+   var BrainGeo = F2(function (a,
+   b) {
+      return {_: {}
+             ,direction: b
+             ,distance: a};
+   });
+   _elm.Compass.values = {_op: _op
+                         ,fromRaw: fromRaw
+                         ,BrainGeo: BrainGeo
+                         ,RawGeo: RawGeo};
+   return _elm.Compass.values;
+};
 Elm.Debug = Elm.Debug || {};
 Elm.Debug.make = function (_elm) {
    "use strict";
@@ -653,6 +697,54 @@ Elm.Debug.make = function (_elm) {
                        ,watchSummary: watchSummary
                        ,trace: trace};
    return _elm.Debug.values;
+};
+Elm.Fonts = Elm.Fonts || {};
+Elm.Fonts.make = function (_elm) {
+   "use strict";
+   _elm.Fonts = _elm.Fonts || {};
+   if (_elm.Fonts.values)
+   return _elm.Fonts.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Fonts",
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Text = Elm.Text.make(_elm);
+   var iuStyle = F2(function (s,
+   t) {
+      return $Graphics$Element.centered(A2($Text.style,
+      s,
+      $Text.fromString(t)));
+   });
+   var bigFont = {_: {}
+                 ,bold: false
+                 ,color: $Color.white
+                 ,height: $Maybe.Just(72)
+                 ,italic: false
+                 ,line: $Maybe.Nothing
+                 ,typeface: _L.fromArray(["BentonSansBold"
+                                         ,"sans"])};
+   var medFont = _U.replace([["typeface"
+                             ,_L.fromArray(["BentonSansRegular"
+                                           ,"sans"])]
+                            ,["height",$Maybe.Just(36)]],
+   bigFont);
+   var smFont = _U.replace([["height"
+                            ,$Maybe.Just(16)]],
+   medFont);
+   var smBold = _U.replace([["height"
+                            ,$Maybe.Just(16)]],
+   bigFont);
+   _elm.Fonts.values = {_op: _op
+                       ,bigFont: bigFont
+                       ,medFont: medFont
+                       ,smFont: smFont
+                       ,smBold: smBold
+                       ,iuStyle: iuStyle};
+   return _elm.Fonts.values;
 };
 Elm.Graphics = Elm.Graphics || {};
 Elm.Graphics.Collage = Elm.Graphics.Collage || {};
@@ -1908,9 +2000,181 @@ Elm.Main.make = function (_elm) {
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    $moduleName = "Main",
-   $Graphics$Element = Elm.Graphics.Element.make(_elm);
-   var main = $Graphics$Element.show("hi");
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Compass = Elm.Compass.make(_elm),
+   $Fonts = Elm.Fonts.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
+   "Compass.RawGeo",
+   function (v) {
+      return typeof v === "object" && "lat" in v && "lon" in v ? {_: {}
+                                                                 ,lat: typeof v.lat === "number" ? v.lat : _U.badPort("a number",
+                                                                 v.lat)
+                                                                 ,lon: typeof v.lon === "number" ? v.lon : _U.badPort("a number",
+                                                                 v.lon)} : _U.badPort("an object with fields \'lat\', \'lon\'",
+      v);
+   });
+   var brainBlock = function (_v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var cap2 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
+                 $Fonts.smBold,
+                 "#IUBRAIN?"));
+                 var cap1 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
+                 $Fonts.smFont,
+                 "WHERE IS"));
+                 var h$ = _v0._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
+                 var pic = A3($Graphics$Element.container,
+                 _v0._0,
+                 h$,
+                 $Graphics$Element.middle)(A3($Graphics$Element.fittedImage,
+                 h$,
+                 h$,
+                 "assets/flatbrain_white.png"));
+                 var group = $Graphics$Element.flow($Graphics$Element.down)(A2($List.map,
+                 $Graphics$Element.width(_v0._0),
+                 _L.fromArray([pic,cap1,cap2])));
+                 return A4($Graphics$Element.container,
+                 _v0._0,
+                 _v0._1,
+                 $Graphics$Element.middle,
+                 group);
+              }();}
+         _U.badCase($moduleName,
+         "between lines 30 and 37");
+      }();
+   };
+   var distMessage = function (geo) {
+      return function () {
+         var kilo = function (x) {
+            return x / 1000;
+         };
+         var mile = function (x) {
+            return x * 0.62137 / 1000;
+         };
+         var foot = function (x) {
+            return x * 3.281;
+         };
+         var inch = function (x) {
+            return 12 * foot(x);
+         };
+         var d = function (_) {
+            return _.distance;
+         }(geo);
+         return _U.cmp(d,
+         100) < 0 ? {_: {}
+                    ,dist: inch(d)
+                    ,msg: "INCHES"} : _U.cmp(d,
+         1000) < 0 ? {_: {}
+                     ,dist: foot(d)
+                     ,msg: "FEET"} : _U.cmp(d,
+         10000) < 0 ? {_: {}
+                      ,dist: mile(d)
+                      ,msg: "MILES"} : {_: {}
+                                       ,dist: kilo(d)
+                                       ,msg: "KILOMETERS"};
+      }();
+   };
+   var compassBlock = F2(function (_v4,
+   g) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var sLine = _U.replace([["width"
+                                         ,3]
+                                        ,["color",$Color.white]],
+                 $Graphics$Collage.defaultLine);
+                 var bg = $Compass.fromRaw(g);
+                 var dm = distMessage(bg);
+                 var cap1 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 $Fonts.bigFont,
+                 $Basics.toString($Basics.floor(dm.dist))));
+                 var cap2 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 $Fonts.medFont,
+                 dm.msg));
+                 var caps = A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([cap1,cap2]));
+                 var r = 0.4 * $Basics.toFloat(_U.cmp(_v4._0,
+                 _v4._1) < 0 ? _v4._0 : _v4._1);
+                 var cir = $Graphics$Collage.outlined(sLine)($Graphics$Collage.circle(r));
+                 var lin = $Graphics$Collage.traced(sLine)(A2($Graphics$Collage.segment,
+                 $Basics.fromPolar({ctor: "_Tuple2"
+                                   ,_0: r * 0.9
+                                   ,_1: bg.direction}),
+                 $Basics.fromPolar({ctor: "_Tuple2"
+                                   ,_0: r * 1.1
+                                   ,_1: bg.direction})));
+                 return A4($Graphics$Element.container,
+                 _v4._0,
+                 _v4._1,
+                 $Graphics$Element.middle,
+                 A3($Graphics$Collage.collage,
+                 _v4._0,
+                 _v4._1,
+                 _L.fromArray([cir
+                              ,lin
+                              ,$Graphics$Collage.toForm(caps)])));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 40 and 51");
+      }();
+   });
+   var scene = F2(function (_v8,
+   g) {
+      return function () {
+         switch (_v8.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var upper = 0.2;
+                 var ht = function (x) {
+                    return $Basics.round($Basics.toFloat(_v8._1) * x);
+                 };
+                 var h1 = ht(upper);
+                 var h2 = ht(1 - upper);
+                 return $Graphics$Element.color(A3($Color.rgb,
+                 221,
+                 30,
+                 52))($Graphics$Element.width(_v8._0)(A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([brainBlock({ctor: "_Tuple2"
+                                          ,_0: _v8._0
+                                          ,_1: h1})
+                              ,A2(compassBlock,
+                              {ctor: "_Tuple2"
+                              ,_0: _v8._0
+                              ,_1: h2},
+                              g)]))));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 54 and 62");
+      }();
+   });
+   var main = A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   scene,
+   $Window.dimensions),
+   geo);
+   var DistMessage = F2(function (a,
+   b) {
+      return {_: {}
+             ,dist: a
+             ,msg: b};
+   });
    _elm.Main.values = {_op: _op
+                      ,DistMessage: DistMessage
+                      ,distMessage: distMessage
+                      ,brainBlock: brainBlock
+                      ,compassBlock: compassBlock
+                      ,scene: scene
                       ,main: main};
    return _elm.Main.values;
 };
@@ -6263,6 +6527,75 @@ Elm.Native.Utils.make = function(localRuntime) {
 	};
 };
 
+Elm.Native = Elm.Native || {};
+Elm.Native.Window = {};
+Elm.Native.Window.make = function(localRuntime) {
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Window = localRuntime.Native.Window || {};
+	if (localRuntime.Native.Window.values)
+	{
+		return localRuntime.Native.Window.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Tuple2 = Elm.Native.Utils.make(localRuntime).Tuple2;
+
+
+	function getWidth()
+	{
+		return localRuntime.node.clientWidth;
+	}
+
+
+	function getHeight()
+	{
+		if (localRuntime.isFullscreen())
+		{
+			return window.innerHeight;
+		}
+		return localRuntime.node.clientHeight;
+	}
+
+
+	var dimensions = NS.input('Window.dimensions', Tuple2(getWidth(), getHeight()));
+
+
+	function resizeIfNeeded()
+	{
+		// Do not trigger event if the dimensions have not changed.
+		// This should be most of the time.
+		var w = getWidth();
+		var h = getHeight();
+		if (dimensions.value._0 === w && dimensions.value._1 === h)
+		{
+			return;
+		}
+
+		setTimeout(function () {
+			// Check again to see if the dimensions have changed.
+			// It is conceivable that the dimensions have changed
+			// again while some other event was being processed.
+			var w = getWidth();
+			var h = getHeight();
+			if (dimensions.value._0 === w && dimensions.value._1 === h)
+			{
+				return;
+			}
+			localRuntime.notify(dimensions.id, Tuple2(w,h));
+		}, 0);
+	}
+
+
+	localRuntime.addListener([dimensions.id], window, 'resize', resizeIfNeeded);
+
+
+	return localRuntime.Native.Window.values = {
+		dimensions: dimensions,
+		resizeIfNeeded: resizeIfNeeded
+	};
+};
+
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";
@@ -7026,4 +7359,31 @@ Elm.Transform2D.make = function (_elm) {
                              ,scaleX: scaleX
                              ,scaleY: scaleY};
    return _elm.Transform2D.values;
+};
+Elm.Window = Elm.Window || {};
+Elm.Window.make = function (_elm) {
+   "use strict";
+   _elm.Window = _elm.Window || {};
+   if (_elm.Window.values)
+   return _elm.Window.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Window",
+   $Basics = Elm.Basics.make(_elm),
+   $Native$Window = Elm.Native.Window.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var dimensions = $Native$Window.dimensions;
+   var width = A2($Signal.map,
+   $Basics.fst,
+   dimensions);
+   var height = A2($Signal.map,
+   $Basics.snd,
+   dimensions);
+   _elm.Window.values = {_op: _op
+                        ,dimensions: dimensions
+                        ,width: width
+                        ,height: height};
+   return _elm.Window.values;
 };
