@@ -11,6 +11,7 @@ import Window
 -- geolocation events from JavaScript
 type alias RawGeo = { lat:Float,lon:Float,hdg:Float }
 port geo : Signal RawGeo
+
 -- a more convenient format
 type alias BrainGeo = { distance:Float, direction:Float }
 bg : BrainGeo
