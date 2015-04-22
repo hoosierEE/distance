@@ -1,5 +1,4 @@
 module Main where
-{-| Wire up the whole application -}
 
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
@@ -26,6 +25,7 @@ distMessage geo =
           | d < 10000 -> {dist = mile d, msg = "MILES"}
           | otherwise -> {dist = kilo d, msg = "KILOMETERS"}
 
+brainBlock : (Int,Int) -> Element
 brainBlock (w,h) =
     let
         cap1 = width w <| iuStyle small "WHERE IS"
@@ -36,6 +36,7 @@ brainBlock (w,h) =
     in
        container w h middle group |> link "https://twitter.com/iubrain"
 
+compassBlock : (Int,Int) -> Compass.RawGeo -> Element
 compassBlock (w,h) g =
     let
         r = 0.4 * toFloat (if w < h then w else h)
@@ -50,6 +51,7 @@ compassBlock (w,h) g =
     in
        container w h middle (collage w h [cir,lin,toForm caps]) |> link "http://psych.indiana.edu/"
 
+scene : (Int,Int) -> Compass.RawGeo -> Element
 scene (w,h) g =
     let
         ht x = round <| toFloat h * x
@@ -62,5 +64,7 @@ scene (w,h) g =
        ] |> width w |> color (Color.rgb 221 30 52)
 
 port geo : Signal Compass.RawGeo
+
+main : Signal Element
 main = scene <~ Window.dimensions ~ geo
 

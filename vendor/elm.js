@@ -2124,7 +2124,7 @@ Elm.Main.make = function (_elm) {
                               ,$Graphics$Collage.toForm(caps)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 40 and 51");
+         "between lines 41 and 52");
       }();
    });
    var scene = F2(function (_v8,
@@ -2154,7 +2154,7 @@ Elm.Main.make = function (_elm) {
                               g)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 54 and 62");
+         "between lines 56 and 64");
       }();
    });
    var main = A2($Signal._op["~"],
