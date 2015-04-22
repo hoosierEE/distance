@@ -2008,48 +2008,6 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Window = Elm.Window.make(_elm);
-   var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
-   "Compass.RawGeo",
-   function (v) {
-      return typeof v === "object" && "lat" in v && "lon" in v ? {_: {}
-                                                                 ,lat: typeof v.lat === "number" ? v.lat : _U.badPort("a number",
-                                                                 v.lat)
-                                                                 ,lon: typeof v.lon === "number" ? v.lon : _U.badPort("a number",
-                                                                 v.lon)} : _U.badPort("an object with fields \'lat\', \'lon\'",
-      v);
-   });
-   var brainBlock = function (_v0) {
-      return function () {
-         switch (_v0.ctor)
-         {case "_Tuple2":
-            return function () {
-                 var cap2 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
-                 $Fonts.smallBold,
-                 "#IUBRAIN?"));
-                 var cap1 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
-                 $Fonts.small,
-                 "WHERE IS"));
-                 var hh = _v0._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
-                 var pic = A3($Graphics$Element.container,
-                 _v0._0,
-                 hh,
-                 $Graphics$Element.middle)(A3($Graphics$Element.fittedImage,
-                 hh,
-                 hh,
-                 "assets/flatbrain_white.png"));
-                 var group = A2($Graphics$Element.flow,
-                 $Graphics$Element.down,
-                 _L.fromArray([pic,cap1,cap2]));
-                 return $Graphics$Element.link("https://twitter.com/iubrain")(A4($Graphics$Element.container,
-                 _v0._0,
-                 _v0._1,
-                 $Graphics$Element.middle,
-                 group));
-              }();}
-         _U.badCase($moduleName,
-         "between lines 30 and 37");
-      }();
-   };
    var distMessage = function (geo) {
       return function () {
          var kilo = function (x) {
@@ -2081,10 +2039,26 @@ Elm.Main.make = function (_elm) {
                                        ,msg: "KILOMETERS"};
       }();
    };
-   var compassBlock = F2(function (_v4,
+   var DistMessage = F2(function (a,
+   b) {
+      return {_: {}
+             ,dist: a
+             ,msg: b};
+   });
+   var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
+   "Compass.RawGeo",
+   function (v) {
+      return typeof v === "object" && "lat" in v && "lon" in v ? {_: {}
+                                                                 ,lat: typeof v.lat === "number" ? v.lat : _U.badPort("a number",
+                                                                 v.lat)
+                                                                 ,lon: typeof v.lon === "number" ? v.lon : _U.badPort("a number",
+                                                                 v.lon)} : _U.badPort("an object with fields \'lat\', \'lon\'",
+      v);
+   });
+   var compassBlock = F2(function (_v0,
    g) {
       return function () {
-         switch (_v4.ctor)
+         switch (_v0.ctor)
          {case "_Tuple2":
             return function () {
                  var sLine = _U.replace([["width"
@@ -2093,40 +2067,73 @@ Elm.Main.make = function (_elm) {
                  $Graphics$Collage.defaultLine);
                  var bg = $Compass.fromRaw(g);
                  var dm = distMessage(bg);
-                 var cap1 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 var cap1 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
                  $Fonts.big,
                  $Basics.toString($Basics.floor(dm.dist))));
-                 var cap2 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 var cap2 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
                  $Fonts.medium,
                  dm.msg));
                  var caps = A2($Graphics$Element.flow,
                  $Graphics$Element.down,
                  _L.fromArray([cap1,cap2]));
-                 var r = 0.4 * $Basics.toFloat(_U.cmp(_v4._0,
-                 _v4._1) < 0 ? _v4._0 : _v4._1);
+                 var bgd = $Basics.pi / 2 + bg.direction;
+                 var r = 0.4 * $Basics.toFloat(_U.cmp(_v0._0,
+                 _v0._1) < 0 ? _v0._0 : _v0._1);
                  var cir = $Graphics$Collage.outlined(sLine)($Graphics$Collage.circle(r));
                  var lin = $Graphics$Collage.traced(sLine)(A2($Graphics$Collage.segment,
                  $Basics.fromPolar({ctor: "_Tuple2"
                                    ,_0: r * 0.9
-                                   ,_1: bg.direction}),
+                                   ,_1: bgd}),
                  $Basics.fromPolar({ctor: "_Tuple2"
                                    ,_0: r * 1.1
-                                   ,_1: bg.direction})));
+                                   ,_1: bgd})));
                  return $Graphics$Element.link("http://psych.indiana.edu/")(A4($Graphics$Element.container,
-                 _v4._0,
-                 _v4._1,
+                 _v0._0,
+                 _v0._1,
                  $Graphics$Element.middle,
                  A3($Graphics$Collage.collage,
-                 _v4._0,
-                 _v4._1,
+                 _v0._0,
+                 _v0._1,
                  _L.fromArray([cir
                               ,lin
                               ,$Graphics$Collage.toForm(caps)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 41 and 52");
+         "between lines 34 and 46");
       }();
    });
+   var brainBlock = function (_v4) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var cap2 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 $Fonts.smallBold,
+                 "#IUBRAIN?"));
+                 var cap1 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 $Fonts.small,
+                 "WHERE IS"));
+                 var hh = _v4._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
+                 var pic = A3($Graphics$Element.container,
+                 _v4._0,
+                 hh,
+                 $Graphics$Element.middle)(A3($Graphics$Element.fittedImage,
+                 hh,
+                 hh,
+                 "assets/flatbrain_white.png"));
+                 var group = A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([pic,cap1,cap2]));
+                 return $Graphics$Element.link("https://twitter.com/iubrain")(A4($Graphics$Element.container,
+                 _v4._0,
+                 _v4._1,
+                 $Graphics$Element.middle,
+                 group));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 23 and 30");
+      }();
+   };
    var scene = F2(function (_v8,
    g) {
       return function () {
@@ -2154,7 +2161,7 @@ Elm.Main.make = function (_elm) {
                               g)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 56 and 64");
+         "between lines 50 and 58");
       }();
    });
    var main = A2($Signal._op["~"],
@@ -2162,19 +2169,13 @@ Elm.Main.make = function (_elm) {
    scene,
    $Window.dimensions),
    geo);
-   var DistMessage = F2(function (a,
-   b) {
-      return {_: {}
-             ,dist: a
-             ,msg: b};
-   });
    _elm.Main.values = {_op: _op
-                      ,DistMessage: DistMessage
-                      ,distMessage: distMessage
                       ,brainBlock: brainBlock
                       ,compassBlock: compassBlock
                       ,scene: scene
-                      ,main: main};
+                      ,main: main
+                      ,DistMessage: DistMessage
+                      ,distMessage: distMessage};
    return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
