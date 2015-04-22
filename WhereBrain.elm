@@ -1,10 +1,10 @@
 module WhereBrain where
 
-import Graphics.Element (..)
-import Graphics.Collage (..)
-import Color (..)
-import Signal (..)
+import Color exposing (..)
+import Graphics.Collage exposing (..)
+import Graphics.Element exposing (..)
 import List
+import Signal exposing (..)
 import Text
 import Window
 
