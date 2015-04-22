@@ -1,4 +1,4 @@
-module Fonts (bigFont, medFont, smFont, smBold, iuStyle) where
+module Fonts (big, medium, small, smallBold, iuStyle) where
 {-| custom fonts used by our app -}
 
 import Text
@@ -7,7 +7,7 @@ import Color exposing (white)
 import Graphics.Element as E
 
 -- FONTS
-bigFont =
+big =
     { typeface = [ "BentonSansBold", "sans" ]
     , height   = Just 72
     , color    = white
@@ -16,14 +16,14 @@ bigFont =
     , line     = Nothing
     }
 
-medFont =
-    { bigFont
+medium =
+    { big
     | typeface <- [ "BentonSansRegular", "sans" ]
     , height   <- Just 36
     }
 
-smFont = { medFont | height <- Just 16 }
-smBold = { bigFont | height <- Just 16 }
+small = { medium | height <- Just 16 }
+smallBold = { big | height <- Just 16 }
 
 iuStyle : Text.Style -> String -> E.Element
 iuStyle s t = E.centered (Text.style s (Text.fromString t))

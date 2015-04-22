@@ -4,7 +4,7 @@ module Main where
 import Graphics.Element exposing (..)
 import Graphics.Collage exposing (..)
 import Compass
-import Fonts exposing (bigFont, medFont, smFont, smBold, iuStyle)
+import Fonts exposing (big, medium, small, smallBold, iuStyle)
 import Signal exposing ((<~),(~))
 import Color
 import Window
