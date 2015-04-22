@@ -719,30 +719,30 @@ Elm.Fonts.make = function (_elm) {
       s,
       $Text.fromString(t)));
    });
-   var bigFont = {_: {}
-                 ,bold: false
-                 ,color: $Color.white
-                 ,height: $Maybe.Just(72)
-                 ,italic: false
-                 ,line: $Maybe.Nothing
-                 ,typeface: _L.fromArray(["BentonSansBold"
-                                         ,"sans"])};
-   var medFont = _U.replace([["typeface"
-                             ,_L.fromArray(["BentonSansRegular"
-                                           ,"sans"])]
-                            ,["height",$Maybe.Just(36)]],
-   bigFont);
-   var smFont = _U.replace([["height"
-                            ,$Maybe.Just(16)]],
-   medFont);
-   var smBold = _U.replace([["height"
-                            ,$Maybe.Just(16)]],
-   bigFont);
+   var big = {_: {}
+             ,bold: false
+             ,color: $Color.white
+             ,height: $Maybe.Just(72)
+             ,italic: false
+             ,line: $Maybe.Nothing
+             ,typeface: _L.fromArray(["BentonSansBold"
+                                     ,"sans"])};
+   var medium = _U.replace([["typeface"
+                            ,_L.fromArray(["BentonSansRegular"
+                                          ,"sans"])]
+                           ,["height",$Maybe.Just(36)]],
+   big);
+   var small = _U.replace([["height"
+                           ,$Maybe.Just(16)]],
+   medium);
+   var smallBold = _U.replace([["height"
+                               ,$Maybe.Just(16)]],
+   big);
    _elm.Fonts.values = {_op: _op
-                       ,bigFont: bigFont
-                       ,medFont: medFont
-                       ,smFont: smFont
-                       ,smBold: smBold
+                       ,big: big
+                       ,medium: medium
+                       ,small: small
+                       ,smallBold: smallBold
                        ,iuStyle: iuStyle};
    return _elm.Fonts.values;
 };
@@ -2024,10 +2024,10 @@ Elm.Main.make = function (_elm) {
          {case "_Tuple2":
             return function () {
                  var cap2 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
-                 $Fonts.smBold,
+                 $Fonts.smallBold,
                  "#IUBRAIN?"));
                  var cap1 = $Graphics$Element.width(_v0._0)(A2($Fonts.iuStyle,
-                 $Fonts.smFont,
+                 $Fonts.small,
                  "WHERE IS"));
                  var hh = _v0._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
                  var pic = A3($Graphics$Element.container,
@@ -2094,10 +2094,10 @@ Elm.Main.make = function (_elm) {
                  var bg = $Compass.fromRaw(g);
                  var dm = distMessage(bg);
                  var cap1 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
-                 $Fonts.bigFont,
+                 $Fonts.big,
                  $Basics.toString($Basics.floor(dm.dist))));
                  var cap2 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
-                 $Fonts.medFont,
+                 $Fonts.medium,
                  dm.msg));
                  var caps = A2($Graphics$Element.flow,
                  $Graphics$Element.down,

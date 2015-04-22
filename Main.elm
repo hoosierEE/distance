@@ -21,16 +21,16 @@ distMessage geo =
         inch x = 12 * foot x -- meters to inches
         kilo x = x / 1000
     in
-        if | d < 100   -> {dist = inch d, msg = "INCHES"}
-           | d < 1000  -> {dist = foot d, msg = "FEET"}
-           | d < 10000 -> {dist = mile d, msg = "MILES"}
-           | otherwise -> {dist = kilo d, msg = "KILOMETERS"}
+       if | d < 100   -> {dist = inch d, msg = "INCHES"}
+          | d < 1000  -> {dist = foot d, msg = "FEET"}
+          | d < 10000 -> {dist = mile d, msg = "MILES"}
+          | otherwise -> {dist = kilo d, msg = "KILOMETERS"}
 
 brainBlock (w,h) =
     let
+        cap1 = width w <| iuStyle small "WHERE IS"
+        cap2 = width w <| iuStyle smallBold "#IUBRAIN?"
         hh = h - heightOf cap1 - heightOf cap2
-        cap1 = width w <| iuStyle smFont "WHERE IS"
-        cap2 = width w <| iuStyle smBold "#IUBRAIN?"
         pic = container w hh middle <| fittedImage hh hh "assets/flatbrain_white.png"
         group = flow down [pic, cap1, cap2]
     in
@@ -41,8 +41,8 @@ compassBlock (w,h) g =
         r = 0.4 * toFloat (if w < h then w else h)
         bg = Compass.fromRaw g
         dm = distMessage bg
-        cap1 = width w <| iuStyle bigFont (toString <| floor dm.dist)
-        cap2 = width w <| iuStyle medFont dm.msg
+        cap1 = width w <| iuStyle big (toString <| floor dm.dist)
+        cap2 = width w <| iuStyle medium dm.msg
         caps = flow down [cap1,cap2]
         sLine  = {defaultLine | width <- 3, color <- Color.white }
         cir = circle r |> outlined sLine
@@ -57,9 +57,9 @@ scene (w,h) g =
         h1 = ht upper
         h2 = ht (1-upper)
     in flow down
-        [ brainBlock (w,h1)
-        , compassBlock (w,h2) g
-        ] |> width w |> color (Color.rgb 221 30 52)
+       [ brainBlock (w,h1)
+       , compassBlock (w,h2) g
+       ] |> width w |> color (Color.rgb 221 30 52)
 
 port geo : Signal Compass.RawGeo
 main = scene <~ Window.dimensions ~ geo
