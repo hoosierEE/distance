@@ -19,6 +19,7 @@ function geoError(e) {
 
 var options = {
     timeout: 500,
+    maximumAge: 0
 };
 
 // actually get the values
