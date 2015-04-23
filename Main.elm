@@ -21,13 +21,13 @@ import Fonts
 brainBlock : (Int,Int) -> Element
 brainBlock (w,h) =
     let
-        cap1 = width w <| Fonts.iuStyle Fonts.small "WHERE IS"
-        cap2 = width w <| Fonts.iuStyle Fonts.smallBold "#IUBRAIN?"
+        cap1 = Fonts.iuStyle Fonts.small "WHERE IS" |> width w |> link "http://psych.indiana.edu/"
+        cap2 = Fonts.iuStyle Fonts.smallBold "#IUBRAIN?" |> width w |> link "https://twitter.com/iubrain"
         hh = h - heightOf cap1 - heightOf cap2
-        pic = container w hh middle <| fittedImage hh hh "assets/flatbrain_white.png"
+        pic = fittedImage hh hh "assets/flatbrain_white.png" |> container w hh middle
         group = flow down [pic, cap1, cap2]
     in
-       container w h middle group |> link "https://twitter.com/iubrain"
+       container w h middle group
 
 compassBlock : (Int,Int) -> Compass.RawGeo -> Element
 compassBlock (w,h) g =
@@ -43,7 +43,7 @@ compassBlock (w,h) g =
         cir = circle r |> outlined sLine
         lin = segment (fromPolar (r * 0.9, bgd)) (fromPolar (r * 1.1, bgd)) |> traced sLine
     in
-       container w h middle (collage w h [cir,lin,toForm caps]) |> link "http://psych.indiana.edu/"
+       container w h middle (collage w h [cir,lin,toForm caps])
 
 scene : (Int,Int) -> Compass.RawGeo -> Element
 scene (w,h) g =

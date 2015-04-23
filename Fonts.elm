@@ -7,6 +7,7 @@ import Color exposing (white)
 import Graphics.Element as E
 
 -- FONTS
+big : Text.Style
 big =
     { typeface = [ "BentonSansBold", "sans" ]
     , height   = Just 72
@@ -16,13 +17,17 @@ big =
     , line     = Nothing
     }
 
+medium : Text.Style
 medium =
     { big
     | typeface <- [ "BentonSansRegular", "sans" ]
     , height   <- Just 36
     }
 
+small : Text.Style
 small = { medium | height <- Just 16 }
+
+smallBold : Text.Style
 smallBold = { big | height <- Just 16 }
 
 iuStyle : Text.Style -> String -> E.Element

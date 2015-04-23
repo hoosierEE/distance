@@ -2087,7 +2087,7 @@ Elm.Main.make = function (_elm) {
                  $Basics.fromPolar({ctor: "_Tuple2"
                                    ,_0: r * 1.1
                                    ,_1: bgd})));
-                 return $Graphics$Element.link("http://psych.indiana.edu/")(A4($Graphics$Element.container,
+                 return A4($Graphics$Element.container,
                  _v0._0,
                  _v0._1,
                  $Graphics$Element.middle,
@@ -2096,7 +2096,7 @@ Elm.Main.make = function (_elm) {
                  _v0._1,
                  _L.fromArray([cir
                               ,lin
-                              ,$Graphics$Collage.toForm(caps)]))));
+                              ,$Graphics$Collage.toForm(caps)])));
               }();}
          _U.badCase($moduleName,
          "between lines 34 and 46");
@@ -2107,12 +2107,12 @@ Elm.Main.make = function (_elm) {
          switch (_v4.ctor)
          {case "_Tuple2":
             return function () {
-                 var cap2 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 var cap2 = $Graphics$Element.link("https://twitter.com/iubrain")($Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
                  $Fonts.smallBold,
-                 "#IUBRAIN?"));
-                 var cap1 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 "#IUBRAIN?")));
+                 var cap1 = $Graphics$Element.link("http://psych.indiana.edu/")($Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
                  $Fonts.small,
-                 "WHERE IS"));
+                 "WHERE IS")));
                  var hh = _v4._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
                  var pic = A3($Graphics$Element.container,
                  _v4._0,
@@ -2124,11 +2124,11 @@ Elm.Main.make = function (_elm) {
                  var group = A2($Graphics$Element.flow,
                  $Graphics$Element.down,
                  _L.fromArray([pic,cap1,cap2]));
-                 return $Graphics$Element.link("https://twitter.com/iubrain")(A4($Graphics$Element.container,
+                 return A4($Graphics$Element.container,
                  _v4._0,
                  _v4._1,
                  $Graphics$Element.middle,
-                 group));
+                 group);
               }();}
          _U.badCase($moduleName,
          "between lines 23 and 30");
