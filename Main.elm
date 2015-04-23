@@ -20,16 +20,23 @@ import Fonts
 ------------
 -- RENDER --
 ------------
-brainBlock : (Int,Int) -> Element
-brainBlock (w,h) =
+headerBlock : (Int,Int) -> Element
+headerBlock (w,h) =
     let
-        cap1 = Fonts.iuStyle Fonts.small "WHERE IS" |> width w |> link "http://psych.indiana.edu/"
-        cap2 = Fonts.iuStyle Fonts.smallBold "#IUBRAIN?" |> width w |> link "https://twitter.com/iubrain"
-        hh = h - heightOf cap1 - heightOf cap2
-        pic = fittedImage hh hh "assets/flatbrain_white.png" |> container w hh middle
-        group = flow down [pic, cap1, cap2]
+        cap1 = Fonts.iuStyle Fonts.small "WHERE IS" |> width w
+        cap2 = Fonts.iuStyle Fonts.smallBold "#IUBRAIN?" |> width w
+        hh = h - (2 * heightOf cap1) - heightOf cap2
+        ww = w//3
+        dim = if ww < hh then ww else hh
+        blockify x = container ww hh middle <| fittedImage dim dim x
+        brain = blockify "assets/flatbrain_white.png"
+        tweet = blockify "assets/twitter-xxl.png" |> link "https://twitter.com/iubrain"
+        home  = blockify "assets/home-5-xxl.png" |> link "http://psych.indiana.edu/"
+        emptyRow = container w (heightOf cap1) middle empty
+        row = flow right [tweet, brain, home]
+        column = flow down [emptyRow, row, cap1, cap2]
     in
-       container w h middle group
+       container w h middle column
 
 compassBlock : (Int,Int) -> Compass.RawGeo -> Element
 compassBlock (w,h) g =
@@ -55,7 +62,7 @@ scene (w,h) g =
         h1 = ht upper
         h2 = ht (1-upper)
     in flow down
-       [ brainBlock (w,h1)
+       [ headerBlock (w,h1)
        , compassBlock (w,h2) g
        ] |> width w |> color (Color.rgb 221 30 52)
 
@@ -64,8 +71,6 @@ scene (w,h) g =
 -- PORTS --
 -----------
 port geo : Signal Compass.RawGeo
-port title : String
-port title = (\a -> toString <| fromTime a) (Time.second)
 
 ----------
 -- MAIN --
@@ -73,6 +78,11 @@ port title = (\a -> toString <| fromTime a) (Time.second)
 main : Signal Element
 main = scene <~ Window.dimensions ~ geo
 
+
+------------
+-- UPDATE --
+------------
+-- type Action = PartyTime | Normal
 
 -------------
 -- HELPERS --

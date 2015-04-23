@@ -2081,12 +2081,10 @@ Elm.Main.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Compass = Elm.Compass.make(_elm),
-   $Date = Elm.Date.make(_elm),
    $Fonts = Elm.Fonts.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var distMessage = function (geo) {
       return function () {
@@ -2125,13 +2123,6 @@ Elm.Main.make = function (_elm) {
              ,dist: a
              ,msg: b};
    });
-   var title = Elm.Native.Port.make(_elm).outbound("title",
-   function (v) {
-      return v;
-   },
-   function (a) {
-      return $Basics.toString($Date.fromTime(a));
-   }($Time.second));
    var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
    "Compass.RawGeo",
    function (v) {
@@ -2186,39 +2177,60 @@ Elm.Main.make = function (_elm) {
                               ,$Graphics$Collage.toForm(caps)])));
               }();}
          _U.badCase($moduleName,
-         "between lines 36 and 48");
+         "between lines 43 and 55");
       }();
    });
-   var brainBlock = function (_v4) {
+   var headerBlock = function (_v4) {
       return function () {
          switch (_v4.ctor)
          {case "_Tuple2":
             return function () {
-                 var cap2 = $Graphics$Element.link("https://twitter.com/iubrain")($Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 var ww = _v4._0 / 3 | 0;
+                 var cap2 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
                  $Fonts.smallBold,
-                 "#IUBRAIN?")));
-                 var cap1 = $Graphics$Element.link("http://psych.indiana.edu/")($Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
+                 "#IUBRAIN?"));
+                 var cap1 = $Graphics$Element.width(_v4._0)(A2($Fonts.iuStyle,
                  $Fonts.small,
-                 "WHERE IS")));
-                 var hh = _v4._1 - $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
-                 var pic = A3($Graphics$Element.container,
+                 "WHERE IS"));
+                 var hh = _v4._1 - 2 * $Graphics$Element.heightOf(cap1) - $Graphics$Element.heightOf(cap2);
+                 var dim = _U.cmp(ww,
+                 hh) < 0 ? ww : hh;
+                 var blockify = function (x) {
+                    return A3($Graphics$Element.container,
+                    ww,
+                    hh,
+                    $Graphics$Element.middle)(A3($Graphics$Element.fittedImage,
+                    dim,
+                    dim,
+                    x));
+                 };
+                 var brain = blockify("assets/flatbrain_white.png");
+                 var tweet = $Graphics$Element.link("https://twitter.com/iubrain")(blockify("assets/twitter-xxl.png"));
+                 var home = $Graphics$Element.link("http://psych.indiana.edu/")(blockify("assets/home-5-xxl.png"));
+                 var row = A2($Graphics$Element.flow,
+                 $Graphics$Element.right,
+                 _L.fromArray([tweet
+                              ,brain
+                              ,home]));
+                 var emptyRow = A4($Graphics$Element.container,
                  _v4._0,
-                 hh,
-                 $Graphics$Element.middle)(A3($Graphics$Element.fittedImage,
-                 hh,
-                 hh,
-                 "assets/flatbrain_white.png"));
-                 var group = A2($Graphics$Element.flow,
+                 $Graphics$Element.heightOf(cap1),
+                 $Graphics$Element.middle,
+                 $Graphics$Element.empty);
+                 var column = A2($Graphics$Element.flow,
                  $Graphics$Element.down,
-                 _L.fromArray([pic,cap1,cap2]));
+                 _L.fromArray([emptyRow
+                              ,row
+                              ,cap1
+                              ,cap2]));
                  return A4($Graphics$Element.container,
                  _v4._0,
                  _v4._1,
                  $Graphics$Element.middle,
-                 group);
+                 column);
               }();}
          _U.badCase($moduleName,
-         "between lines 25 and 32");
+         "between lines 25 and 39");
       }();
    };
    var scene = F2(function (_v8,
@@ -2238,9 +2250,9 @@ Elm.Main.make = function (_elm) {
                  30,
                  52))($Graphics$Element.width(_v8._0)(A2($Graphics$Element.flow,
                  $Graphics$Element.down,
-                 _L.fromArray([brainBlock({ctor: "_Tuple2"
-                                          ,_0: _v8._0
-                                          ,_1: h1})
+                 _L.fromArray([headerBlock({ctor: "_Tuple2"
+                                           ,_0: _v8._0
+                                           ,_1: h1})
                               ,A2(compassBlock,
                               {ctor: "_Tuple2"
                               ,_0: _v8._0
@@ -2248,7 +2260,7 @@ Elm.Main.make = function (_elm) {
                               g)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 52 and 60");
+         "between lines 59 and 67");
       }();
    });
    var main = A2($Signal._op["~"],
@@ -2257,7 +2269,7 @@ Elm.Main.make = function (_elm) {
    $Window.dimensions),
    geo);
    _elm.Main.values = {_op: _op
-                      ,brainBlock: brainBlock
+                      ,headerBlock: headerBlock
                       ,compassBlock: compassBlock
                       ,scene: scene
                       ,main: main
