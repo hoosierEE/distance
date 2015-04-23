@@ -2085,6 +2085,7 @@ Elm.Main.make = function (_elm) {
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var distMessage = function (geo) {
       return function () {
@@ -2123,6 +2124,8 @@ Elm.Main.make = function (_elm) {
              ,dist: a
              ,msg: b};
    });
+   var Normal = {ctor: "Normal"};
+   var PartyTime = {ctor: "PartyTime"};
    var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
    "Compass.RawGeo",
    function (v) {
@@ -2177,7 +2180,7 @@ Elm.Main.make = function (_elm) {
                               ,$Graphics$Collage.toForm(caps)])));
               }();}
          _U.badCase($moduleName,
-         "between lines 43 and 55");
+         "between lines 45 and 57");
       }();
    });
    var headerBlock = function (_v4) {
@@ -2230,25 +2233,52 @@ Elm.Main.make = function (_elm) {
                  column);
               }();}
          _U.badCase($moduleName,
-         "between lines 25 and 39");
+         "between lines 25 and 41");
       }();
    };
-   var scene = F2(function (_v8,
+   var scene = F3(function (delta,
+   _v8,
    g) {
       return function () {
          switch (_v8.ctor)
          {case "_Tuple2":
             return function () {
+                 var action = _U.cmp(function (_) {
+                    return _.distance;
+                 }($Compass.fromRaw(g)),
+                 30) < 0 ? PartyTime : Normal;
+                 var bgColor = function () {
+                    switch (action.ctor)
+                    {case "Normal":
+                       return $Graphics$Element.color(A3($Color.rgb,
+                         221,
+                         30,
+                         52));
+                       case "PartyTime":
+                       return $Graphics$Element.color(A3($Color.hsl,
+                         $Basics.radians(delta),
+                         0.5,
+                         0.5));}
+                    _U.badCase($moduleName,
+                    "between lines 71 and 74");
+                 }();
                  var upper = 0.2;
                  var ht = function (x) {
                     return $Basics.round($Basics.toFloat(_v8._1) * x);
                  };
                  var h1 = ht(upper);
                  var h2 = ht(1 - upper);
-                 return $Graphics$Element.color(A3($Color.rgb,
-                 221,
-                 30,
-                 52))($Graphics$Element.width(_v8._0)(A2($Graphics$Element.flow,
+                 var arrangement = $Graphics$Element.width(_v8._0)(A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([headerBlock({ctor: "_Tuple2"
+                                           ,_0: _v8._0
+                                           ,_1: h1})
+                              ,A2(compassBlock,
+                              {ctor: "_Tuple2"
+                              ,_0: _v8._0
+                              ,_1: h2},
+                              g)])));
+                 return bgColor($Graphics$Element.width(_v8._0)(A2($Graphics$Element.flow,
                  $Graphics$Element.down,
                  _L.fromArray([headerBlock({ctor: "_Tuple2"
                                            ,_0: _v8._0
@@ -2260,12 +2290,18 @@ Elm.Main.make = function (_elm) {
                               g)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 59 and 67");
+         "between lines 61 and 77");
       }();
    });
    var main = A2($Signal._op["~"],
+   A2($Signal._op["~"],
    A2($Signal._op["<~"],
    scene,
+   A2($Signal._op["<~"],
+   function ($) {
+      return $Time.inSeconds($Basics.fst($));
+   },
+   $Time.timestamp($Time.fps(80)))),
    $Window.dimensions),
    geo);
    _elm.Main.values = {_op: _op
@@ -2273,6 +2309,8 @@ Elm.Main.make = function (_elm) {
                       ,compassBlock: compassBlock
                       ,scene: scene
                       ,main: main
+                      ,PartyTime: PartyTime
+                      ,Normal: Normal
                       ,DistMessage: DistMessage
                       ,distMessage: distMessage};
    return _elm.Main.values;

@@ -31,7 +31,9 @@ headerBlock (w,h) =
         blockify x = container ww hh middle <| fittedImage dim dim x
         brain = blockify "assets/flatbrain_white.png"
         tweet = blockify "assets/twitter-xxl.png" |> link "https://twitter.com/iubrain"
-        home  = blockify "assets/home-5-xxl.png" |> link "http://psych.indiana.edu/"
+        home  = blockify "assets/home-5-xxl.png"  |> link "http://psych.indiana.edu/"
+        --tweet = blockify "assets/twitter_icon.png" |> link "https://twitter.com/iubrain"
+        --home  = blockify "assets/home_icon.png" |> link "http://psych.indiana.edu/"
         emptyRow = container w (heightOf cap1) middle empty
         row = flow right [tweet, brain, home]
         column = flow down [emptyRow, row, cap1, cap2]
@@ -54,17 +56,25 @@ compassBlock (w,h) g =
     in
        container w h middle (collage w h [cir,lin,toForm caps])
 
-scene : (Int,Int) -> Compass.RawGeo -> Element
-scene (w,h) g =
+scene : Float -> (Int,Int) -> Compass.RawGeo -> Element
+scene delta (w,h) g =
     let
         ht x = round <| toFloat h * x
         upper = 0.2
         h1 = ht upper
         h2 = ht (1-upper)
+        arrangement = flow down
+           [ headerBlock (w,h1)
+           , compassBlock (w,h2) g
+           ] |> width w
+        action = if (.distance <| Compass.fromRaw g) < 30 then PartyTime else Normal
+        bgColor = case action of
+            Normal -> color (Color.rgb 221 30 52)
+            PartyTime -> color (Color.hsl (radians delta) 0.5 0.5)
     in flow down
        [ headerBlock (w,h1)
        , compassBlock (w,h2) g
-       ] |> width w |> color (Color.rgb 221 30 52)
+       ] |> width w |> bgColor
 
 
 -----------
@@ -72,21 +82,18 @@ scene (w,h) g =
 -----------
 port geo : Signal Compass.RawGeo
 
+
 ----------
 -- MAIN --
 ----------
 main : Signal Element
-main = scene <~ Window.dimensions ~ geo
+main = scene <~ ((inSeconds << fst) <~ (timestamp (fps 80))) ~ Window.dimensions ~ geo
 
-
-------------
--- UPDATE --
-------------
--- type Action = PartyTime | Normal
 
 -------------
 -- HELPERS --
 -------------
+type Action = PartyTime | Normal
 type alias DistMessage = { dist: Float, msg: String }
 -- format meters as string
 distMessage : Compass.BrainGeo -> DistMessage
