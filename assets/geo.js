@@ -5,9 +5,6 @@ var g = Elm.fullscreen(Elm.Main, {
     geo: { lat: defaultLat, lon: defaultLon }
 });
 
-// actually get the values
-navigator.geolocation.watchPosition(geoSuccess,geoError);
-
 // callbacks
 function geoSuccess(p) {
     var la = p.coords.latitude || defaultLat;
@@ -19,3 +16,11 @@ function geoSuccess(p) {
 function geoError(e) {
     console.log ('Geolocation error: ' + e.code + ' ( ' + e.message + ' ) ');
 }
+
+var options = {
+    timeout: 500,
+};
+
+// actually get the values
+navigator.geolocation.watchPosition(geoSuccess,geoError,options);
+
