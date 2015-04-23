@@ -672,6 +672,84 @@ Elm.Compass.make = function (_elm) {
                          ,RawGeo: RawGeo};
    return _elm.Compass.values;
 };
+Elm.Date = Elm.Date || {};
+Elm.Date.make = function (_elm) {
+   "use strict";
+   _elm.Date = _elm.Date || {};
+   if (_elm.Date.values)
+   return _elm.Date.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Date",
+   $Native$Date = Elm.Native.Date.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var millisecond = $Native$Date.millisecond;
+   var second = $Native$Date.second;
+   var minute = $Native$Date.minute;
+   var hour = $Native$Date.hour;
+   var dayOfWeek = $Native$Date.dayOfWeek;
+   var day = $Native$Date.day;
+   var month = $Native$Date.month;
+   var year = $Native$Date.year;
+   var fromTime = $Native$Date.fromTime;
+   var toTime = $Native$Date.toTime;
+   var fromString = $Native$Date.read;
+   var Dec = {ctor: "Dec"};
+   var Nov = {ctor: "Nov"};
+   var Oct = {ctor: "Oct"};
+   var Sep = {ctor: "Sep"};
+   var Aug = {ctor: "Aug"};
+   var Jul = {ctor: "Jul"};
+   var Jun = {ctor: "Jun"};
+   var May = {ctor: "May"};
+   var Apr = {ctor: "Apr"};
+   var Mar = {ctor: "Mar"};
+   var Feb = {ctor: "Feb"};
+   var Jan = {ctor: "Jan"};
+   var Sun = {ctor: "Sun"};
+   var Sat = {ctor: "Sat"};
+   var Fri = {ctor: "Fri"};
+   var Thu = {ctor: "Thu"};
+   var Wed = {ctor: "Wed"};
+   var Tue = {ctor: "Tue"};
+   var Mon = {ctor: "Mon"};
+   var Date = {ctor: "Date"};
+   _elm.Date.values = {_op: _op
+                      ,fromString: fromString
+                      ,toTime: toTime
+                      ,fromTime: fromTime
+                      ,year: year
+                      ,month: month
+                      ,day: day
+                      ,dayOfWeek: dayOfWeek
+                      ,hour: hour
+                      ,minute: minute
+                      ,second: second
+                      ,millisecond: millisecond
+                      ,Jan: Jan
+                      ,Feb: Feb
+                      ,Mar: Mar
+                      ,Apr: Apr
+                      ,May: May
+                      ,Jun: Jun
+                      ,Jul: Jul
+                      ,Aug: Aug
+                      ,Sep: Sep
+                      ,Oct: Oct
+                      ,Nov: Nov
+                      ,Dec: Dec
+                      ,Mon: Mon
+                      ,Tue: Tue
+                      ,Wed: Wed
+                      ,Thu: Thu
+                      ,Fri: Fri
+                      ,Sat: Sat
+                      ,Sun: Sun};
+   return _elm.Date.values;
+};
 Elm.Debug = Elm.Debug || {};
 Elm.Debug.make = function (_elm) {
    "use strict";
@@ -2003,10 +2081,12 @@ Elm.Main.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Compass = Elm.Compass.make(_elm),
+   $Date = Elm.Date.make(_elm),
    $Fonts = Elm.Fonts.make(_elm),
    $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var distMessage = function (geo) {
       return function () {
@@ -2045,6 +2125,13 @@ Elm.Main.make = function (_elm) {
              ,dist: a
              ,msg: b};
    });
+   var title = Elm.Native.Port.make(_elm).outbound("title",
+   function (v) {
+      return v;
+   },
+   function (a) {
+      return $Basics.toString($Date.fromTime(a));
+   }($Time.second));
    var geo = Elm.Native.Port.make(_elm).inboundSignal("geo",
    "Compass.RawGeo",
    function (v) {
@@ -2099,7 +2186,7 @@ Elm.Main.make = function (_elm) {
                               ,$Graphics$Collage.toForm(caps)])));
               }();}
          _U.badCase($moduleName,
-         "between lines 34 and 46");
+         "between lines 36 and 48");
       }();
    });
    var brainBlock = function (_v4) {
@@ -2131,7 +2218,7 @@ Elm.Main.make = function (_elm) {
                  group);
               }();}
          _U.badCase($moduleName,
-         "between lines 23 and 30");
+         "between lines 25 and 32");
       }();
    };
    var scene = F2(function (_v8,
@@ -2161,7 +2248,7 @@ Elm.Main.make = function (_elm) {
                               g)]))));
               }();}
          _U.badCase($moduleName,
-         "between lines 50 and 58");
+         "between lines 52 and 60");
       }();
    });
    var main = A2($Signal._op["~"],
@@ -2426,6 +2513,52 @@ Elm.Native.Color.make = function(localRuntime) {
 
 	return localRuntime.Native.Color.values = {
 		toCss: toCss
+	};
+
+};
+
+Elm.Native.Date = {};
+Elm.Native.Date.make = function(localRuntime) {
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Date = localRuntime.Native.Date || {};
+	if (localRuntime.Native.Date.values)
+	{
+		return localRuntime.Native.Date.values;
+	}
+
+	var Result = Elm.Result.make(localRuntime);
+
+	function dateNow()
+	{
+		return new window.Date;
+	}
+
+	function readDate(str)
+	{
+		var date = new window.Date(str);
+		return isNaN(date.getTime())
+			? Result.Err("unable to parse '" + str + "' as a date")
+			: Result.Ok(date);
+	}
+
+	var dayTable = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	var monthTable =
+		["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+
+	return localRuntime.Native.Date.values = {
+		read    : readDate,
+		year    : function(d) { return d.getFullYear(); },
+		month   : function(d) { return { ctor:monthTable[d.getMonth()] }; },
+		day     : function(d) { return d.getDate(); },
+		hour    : function(d) { return d.getHours(); },
+		minute  : function(d) { return d.getMinutes(); },
+		second  : function(d) { return d.getSeconds(); },
+		millisecond: function (d) { return d.getMilliseconds(); },
+		toTime  : function(d) { return d.getTime(); },
+		fromTime: function(t) { return new window.Date(t); },
+		dayOfWeek : function(d) { return { ctor:dayTable[d.getDay()] }; }
 	};
 
 };
@@ -6051,6 +6184,117 @@ Elm.Native.Text.make = function(localRuntime) {
 	};
 };
 
+Elm.Native.Time = {};
+Elm.Native.Time.make = function(localRuntime)
+{
+
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Time = localRuntime.Native.Time || {};
+	if (localRuntime.Native.Time.values)
+	{
+		return localRuntime.Native.Time.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Maybe = Elm.Maybe.make(localRuntime);
+
+
+	// FRAMES PER SECOND
+
+	function fpsWhen(desiredFPS, isOn)
+	{
+		var msPerFrame = 1000 / desiredFPS;
+		var ticker = NS.input('fps-' + desiredFPS, null);
+
+		function notifyTicker()
+		{
+			localRuntime.notify(ticker.id, null);
+		}
+
+		function firstArg(x, y)
+		{
+			return x;
+		}
+
+		// input fires either when isOn changes, or when ticker fires.
+		// Its value is a tuple with the current timestamp, and the state of isOn
+		var input = NS.timestamp(A3(NS.map2, F2(firstArg), NS.dropRepeats(isOn), ticker));
+
+		var initialState = {
+			isOn: false,
+			time: localRuntime.timer.programStart,
+			delta: 0
+		};
+
+		var timeoutId;
+
+		function update(input,state)
+		{
+			var currentTime = input._0;
+			var isOn = input._1;
+			var wasOn = state.isOn;
+			var previousTime = state.time;
+
+			if (isOn)
+			{
+				timeoutId = localRuntime.setTimeout(notifyTicker, msPerFrame);
+			}
+			else if (wasOn)
+			{
+				clearTimeout(timeoutId);
+			}
+
+			return {
+				isOn: isOn,
+				time: currentTime,
+				delta: (isOn && !wasOn) ? 0 : currentTime - previousTime
+			};
+		}
+
+		return A2(
+			NS.map,
+			function(state) { return state.delta; },
+			A3(NS.foldp, F2(update), update(input.value,initialState), input)
+		);
+	}
+
+
+	// EVERY
+
+	function every(t)
+	{
+		var ticker = NS.input('every-' + t, null);
+		function tellTime()
+		{
+			localRuntime.notify(ticker.id, null);
+		}
+		var clock = A2( NS.map, fst, NS.timestamp(ticker) );
+		setInterval(tellTime, t);
+		return clock;
+	}
+
+
+	function fst(pair)
+	{
+		return pair._0;
+	}
+
+
+	function read(s)
+	{
+		var t = Date.parse(s);
+		return isNaN(t) ? Maybe.Nothing : Maybe.Just(t);
+	}
+
+	return localRuntime.Native.Time.values = {
+		fpsWhen: F2(fpsWhen),
+		every: every,
+		toDate: function(t) { return new window.Date(t); },
+		read: read
+	};
+
+};
+
 Elm.Native.Transform2D = {};
 Elm.Native.Transform2D.make = function(localRuntime) {
 
@@ -7294,6 +7538,85 @@ Elm.Text.make = function (_elm) {
                       ,Over: Over
                       ,Through: Through};
    return _elm.Text.values;
+};
+Elm.Time = Elm.Time || {};
+Elm.Time.make = function (_elm) {
+   "use strict";
+   _elm.Time = _elm.Time || {};
+   if (_elm.Time.values)
+   return _elm.Time.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Time",
+   $Basics = Elm.Basics.make(_elm),
+   $Native$Signal = Elm.Native.Signal.make(_elm),
+   $Native$Time = Elm.Native.Time.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var delay = $Native$Signal.delay;
+   var since = F2(function (time,
+   signal) {
+      return function () {
+         var stop = A2($Signal.map,
+         $Basics.always(-1),
+         A2(delay,time,signal));
+         var start = A2($Signal.map,
+         $Basics.always(1),
+         signal);
+         var delaydiff = A3($Signal.foldp,
+         F2(function (x,y) {
+            return x + y;
+         }),
+         0,
+         A2($Signal.merge,start,stop));
+         return A2($Signal.map,
+         F2(function (x,y) {
+            return !_U.eq(x,y);
+         })(0),
+         delaydiff);
+      }();
+   });
+   var timestamp = $Native$Signal.timestamp;
+   var every = $Native$Time.every;
+   var fpsWhen = $Native$Time.fpsWhen;
+   var fps = function (targetFrames) {
+      return A2(fpsWhen,
+      targetFrames,
+      $Signal.constant(true));
+   };
+   var inMilliseconds = function (t) {
+      return t;
+   };
+   var millisecond = 1;
+   var second = 1000 * millisecond;
+   var minute = 60 * second;
+   var hour = 60 * minute;
+   var inHours = function (t) {
+      return t / hour;
+   };
+   var inMinutes = function (t) {
+      return t / minute;
+   };
+   var inSeconds = function (t) {
+      return t / second;
+   };
+   _elm.Time.values = {_op: _op
+                      ,millisecond: millisecond
+                      ,second: second
+                      ,minute: minute
+                      ,hour: hour
+                      ,inMilliseconds: inMilliseconds
+                      ,inSeconds: inSeconds
+                      ,inMinutes: inMinutes
+                      ,inHours: inHours
+                      ,fps: fps
+                      ,fpsWhen: fpsWhen
+                      ,every: every
+                      ,timestamp: timestamp
+                      ,delay: delay
+                      ,since: since};
+   return _elm.Time.values;
 };
 Elm.Transform2D = Elm.Transform2D || {};
 Elm.Transform2D.make = function (_elm) {

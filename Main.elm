@@ -4,10 +4,12 @@ module Main where
 -- STANDARD LIBRARY IMPORTS --
 ------------------------------
 import Color
+import Date exposing (..)
 import Graphics.Collage exposing (..)
 import Graphics.Element exposing (..)
 import Signal exposing ((<~),(~))
 import Window
+import Time exposing (..)
 
 -------------------
 -- LOCAL IMPORTS --
@@ -62,7 +64,8 @@ scene (w,h) g =
 -- PORTS --
 -----------
 port geo : Signal Compass.RawGeo
-
+port title : String
+port title = (\a -> toString <| fromTime a) (Time.second)
 
 ----------
 -- MAIN --
